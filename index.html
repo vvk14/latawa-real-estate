@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LATAWA REAL ESTATE — Trust • Value • Growth</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
+  <!-- Lenis -->
+  <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.umd.js"></script>
+  <!-- SplitType -->
+  <script src="https://cdn.jsdelivr.net/npm/split-type@0.3.4/umd/index.min.js"></script>
+  <!-- Three.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Mouse Follower -->
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-dot" id="cursorDot"></div>
+
+  <!-- Preloader -->
+  <div class="preloader" id="preloader">
+    <div class="preloader-inner">
+      <div class="preloader-logo">
+        <svg viewBox="0 0 120 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="logo-svg-pre">
+          <path d="M60 5 L100 35 L100 40 L90 40 L90 35 L60 15 L30 35 L30 40 L20 40 L20 35 Z" fill="white"/>
+          <path d="M35 38 L35 85 L50 85 L50 60 L70 60 L70 85 L85 85 L85 38 L60 20 Z" fill="none" stroke="white" stroke-width="3"/>
+          <rect x="52" y="40" width="16" height="16" rx="1" fill="none" stroke="white" stroke-width="2.5"/>
+          <line x1="60" y1="40" x2="60" y2="56" stroke="white" stroke-width="1.5"/>
+          <line x1="52" y1="48" x2="68" y2="48" stroke="white" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <div class="preloader-bar"><div class="preloader-fill" id="preloaderFill"></div></div>
+      <p class="preloader-text">LATAWA REAL ESTATE</p>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="#hero" class="nav-logo">
+        <svg viewBox="0 0 80 66" fill="none" xmlns="http://www.w3.org/2000/svg" class="logo-svg">
+          <path d="M40 3 L68 23 L68 27 L60 27 L60 23 L40 10 L20 23 L20 27 L12 27 L12 23 Z" fill="white"/>
+          <path d="M22 25 L22 58 L33 58 L33 40 L47 40 L47 58 L58 58 L58 25 L40 13 Z" fill="none" stroke="white" stroke-width="2.2"/>
+          <rect x="34" y="27" width="12" height="11" rx="0.5" fill="none" stroke="white" stroke-width="1.8"/>
+          <line x1="40" y1="27" x2="40" y2="38" stroke="white" stroke-width="1.2"/>
+          <line x1="34" y1="32.5" x2="46" y2="32.5" stroke="white" stroke-width="1.2"/>
+        </svg>
+        <div class="logo-text">
+          <span class="logo-name">LATAWA</span>
+          <span class="logo-sub">REAL ESTATE</span>
+        </div>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#hero" class="nav-link">Home</a></li>
+        <li><a href="#properties" class="nav-link">Properties</a></li>
+        <li><a href="#about" class="nav-link">About</a></li>
+        <li><a href="#services" class="nav-link">Services</a></li>
+        <li><a href="#showcase" class="nav-link">Projects</a></li>
+        <li><a href="#contact" class="nav-link contact-btn magnetic">Contact</a></li>
+      </ul>
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <ul>
+      <li><a href="#hero" class="mob-link">Home</a></li>
+      <li><a href="#properties" class="mob-link">Properties</a></li>
+      <li><a href="#about" class="mob-link">About</a></li>
+      <li><a href="#services" class="mob-link">Services</a></li>
+      <li><a href="#showcase" class="mob-link">Projects</a></li>
+      <li><a href="#contact" class="mob-link">Contact</a></li>
+    </ul>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero" id="hero">
+    <canvas id="heroCanvas"></canvas>
+    <div class="hero-bg">
+      <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1800&q=80&fit=crop" alt="Luxury Architecture" class="hero-img" />
+      <div class="hero-overlay"></div>
+    </div>
+    <div class="hero-particles" id="heroParticles"></div>
+    <div class="hero-content">
+      <p class="hero-eyebrow reveal-text">Trust · Value · Growth</p>
+      <h1 class="hero-headline">
+        <span class="hero-line">Where Vision</span>
+        <span class="hero-line hero-line-italic">Meets Valuable</span>
+        <span class="hero-line">Real Estate</span>
+      </h1>
+      <p class="hero-sub reveal-text">Premium property investments designed for<br/>long-term growth and trust.</p>
+      <div class="hero-btns reveal-text">
+        <a href="#properties" class="btn-primary magnetic">Explore Properties</a>
+        <a href="#contact" class="btn-ghost magnetic">Book Consultation</a>
+      </div>
+    </div>
+    <div class="hero-scroll-indicator">
+      <div class="scroll-line"></div>
+      <span>Scroll</span>
+    </div>
+    <div class="hero-tagline-strip">
+      <span>LATAWA REAL ESTATE</span>
+      <span class="dot-sep">·</span>
+      <span>TRUST</span>
+      <span class="dot-sep">·</span>
+      <span>VALUE</span>
+      <span class="dot-sep">·</span>
+      <span>GROWTH</span>
+      <span class="dot-sep">·</span>
+      <span>PREMIUM PROPERTIES</span>
+      <span class="dot-sep">·</span>
+      <span>SINCE 2014</span>
+    </div>
+  </section>
+
+  <!-- TRUST STATS -->
+  <section class="trust-section" id="trust">
+    <div class="container">
+      <div class="trust-grid">
+        <div class="trust-card">
+          <h2 class="trust-num" data-target="500">0</h2>
+          <span class="trust-plus">+</span>
+          <p class="trust-label">Properties</p>
+        </div>
+        <div class="trust-card">
+          <h2 class="trust-num" data-target="100">0</h2>
+          <span class="trust-plus">+</span>
+          <p class="trust-label">Happy Clients</p>
+        </div>
+        <div class="trust-card">
+          <h2 class="trust-num" data-target="10">0</h2>
+          <span class="trust-plus">+</span>
+          <p class="trust-label">Years Experience</p>
+        </div>
+        <div class="trust-card">
+          <h2 class="trust-num" data-target="50">0</h2>
+          <span class="trust-plus">+</span>
+          <p class="trust-label">Projects Delivered</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="marquee-wrap">
+    <div class="marquee-track">
+      <span>LUXURY LIVING</span><span class="m-dot">◆</span>
+      <span>PRIME LOCATIONS</span><span class="m-dot">◆</span>
+      <span>TRUSTED INVESTMENTS</span><span class="m-dot">◆</span>
+      <span>PREMIUM PROPERTIES</span><span class="m-dot">◆</span>
+      <span>EXPERT GUIDANCE</span><span class="m-dot">◆</span>
+      <span>LATAWA REAL ESTATE</span><span class="m-dot">◆</span>
+      <span>LUXURY LIVING</span><span class="m-dot">◆</span>
+      <span>PRIME LOCATIONS</span><span class="m-dot">◆</span>
+      <span>TRUSTED INVESTMENTS</span><span class="m-dot">◆</span>
+      <span>PREMIUM PROPERTIES</span><span class="m-dot">◆</span>
+      <span>EXPERT GUIDANCE</span><span class="m-dot">◆</span>
+      <span>LATAWA REAL ESTATE</span><span class="m-dot">◆</span>
+    </div>
+  </div>
+
+  <!-- ABOUT -->
+  <section class="about-section" id="about">
+    <div class="container about-grid">
+      <div class="about-image-wrap">
+        <div class="about-img-frame">
+          <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&q=80&fit=crop" alt="Premium Architecture" class="about-img parallax-img" />
+        </div>
+        <div class="about-float-card glass-card">
+          <p class="float-num">10+</p>
+          <p class="float-label">Years of Excellence</p>
+        </div>
+      </div>
+      <div class="about-content">
+        <p class="section-eyebrow">About Latawa</p>
+        <h2 class="section-heading split-heading">Redefining<br/><em>Luxury</em><br/>Real Estate</h2>
+        <p class="about-para">At Latawa Real Estate, we don't just sell properties — we craft futures. With over a decade of experience across premium residential and commercial markets, we have built a legacy of trust, delivering unmatched value to every client we serve.</p>
+        <p class="about-para">Founded by Inder Latawa and guided by Vivek Latawa, our team brings personal dedication to every transaction, ensuring your investment journey is seamless, informed, and rewarding.</p>
+        <div class="about-tags">
+          <span class="tag">Premium Residential</span>
+          <span class="tag">Commercial Spaces</span>
+          <span class="tag">Investment Advisory</span>
+        </div>
+        <a href="#contact" class="btn-outline magnetic">Work With Us</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURED PROPERTIES -->
+  <section class="properties-section" id="properties">
+    <div class="container">
+      <div class="section-header">
+        <p class="section-eyebrow">Portfolio</p>
+        <h2 class="section-heading split-heading">Featured<br/><em>Properties</em></h2>
+        <p class="section-desc">Curated selection of our most exclusive listings, each representing the pinnacle of luxury living.</p>
+      </div>
+      <div class="properties-grid">
+
+        <div class="prop-card glass-card">
+          <div class="prop-img-wrap">
+            <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80&fit=crop" alt="The Meridian Villa" class="prop-img" />
+            <div class="prop-overlay">
+              <a href="#contact" class="prop-view-btn magnetic">View Details</a>
+            </div>
+            <span class="prop-badge">Featured</span>
+          </div>
+          <div class="prop-info">
+            <h3 class="prop-name">The Meridian Villa</h3>
+            <p class="prop-loc">📍 Chandigarh, Punjab</p>
+            <p class="prop-price">₹2.8 Cr</p>
+          </div>
+        </div>
+
+        <div class="prop-card glass-card">
+          <div class="prop-img-wrap">
+            <img src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=600&q=80&fit=crop" alt="Skyline Residency" class="prop-img" />
+            <div class="prop-overlay">
+              <a href="#contact" class="prop-view-btn magnetic">View Details</a>
+            </div>
+            <span class="prop-badge">New</span>
+          </div>
+          <div class="prop-info">
+            <h3 class="prop-name">Skyline Residency</h3>
+            <p class="prop-loc">📍 Mohali, Punjab</p>
+            <p class="prop-price">₹1.5 Cr</p>
+          </div>
+        </div>
+
+        <div class="prop-card glass-card">
+          <div class="prop-img-wrap">
+            <img src="https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=600&q=80&fit=crop" alt="The Luxe Manor" class="prop-img" />
+            <div class="prop-overlay">
+              <a href="#contact" class="prop-view-btn magnetic">View Details</a>
+            </div>
+          </div>
+          <div class="prop-info">
+            <h3 class="prop-name">The Luxe Manor</h3>
+            <p class="prop-loc">📍 Ludhiana, Punjab</p>
+            <p class="prop-price">₹3.2 Cr</p>
+          </div>
+        </div>
+
+        <div class="prop-card glass-card">
+          <div class="prop-img-wrap">
+            <img src="https://images.unsplash.com/photo-1628744448840-55bdb2497bd4?w=600&q=80&fit=crop" alt="Horizon Apartments" class="prop-img" />
+            <div class="prop-overlay">
+              <a href="#contact" class="prop-view-btn magnetic">View Details</a>
+            </div>
+            <span class="prop-badge">Prime</span>
+          </div>
+          <div class="prop-info">
+            <h3 class="prop-name">Horizon Apartments</h3>
+            <p class="prop-loc">📍 Firozpur, Punjab</p>
+            <p class="prop-price">₹85 L</p>
+          </div>
+        </div>
+
+        <div class="prop-card glass-card">
+          <div class="prop-img-wrap">
+            <img src="https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?w=600&q=80&fit=crop" alt="Oasis Farmhouse" class="prop-img" />
+            <div class="prop-overlay">
+              <a href="#contact" class="prop-view-btn magnetic">View Details</a>
+            </div>
+          </div>
+          <div class="prop-info">
+            <h3 class="prop-name">Oasis Farmhouse</h3>
+            <p class="prop-loc">📍 Mansa, Punjab</p>
+            <p class="prop-price">₹1.1 Cr</p>
+          </div>
+        </div>
+
+        <div class="prop-card glass-card">
+          <div class="prop-img-wrap">
+            <img src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=600&q=80&fit=crop" alt="The Crown Estate" class="prop-img" />
+            <div class="prop-overlay">
+              <a href="#contact" class="prop-view-btn magnetic">View Details</a>
+            </div>
+            <span class="prop-badge">Exclusive</span>
+          </div>
+          <div class="prop-info">
+            <h3 class="prop-name">The Crown Estate</h3>
+            <p class="prop-loc">📍 Amritsar, Punjab</p>
+            <p class="prop-price">₹4.5 Cr</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY CHOOSE US -->
+  <section class="services-section" id="services">
+    <div class="container">
+      <div class="section-header">
+        <p class="section-eyebrow">Why Latawa</p>
+        <h2 class="section-heading split-heading">Built on<br/><em>Excellence</em></h2>
+      </div>
+      <div class="services-grid">
+        <div class="service-card glass-card">
+          <div class="service-icon">
+            <svg viewBox="0 0 40 40" fill="none"><path d="M20 4L36 12V20C36 28 28.8 35.2 20 38C11.2 35.2 4 28 4 20V12L20 4Z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/><path d="M13 20L18 25L28 15" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h3 class="service-title">Trusted Investment</h3>
+          <p class="service-desc">Every property is carefully vetted for legal clarity and long-term value before we present it to you.</p>
+        </div>
+        <div class="service-card glass-card">
+          <div class="service-icon">
+            <svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="15" stroke="white" stroke-width="1.5"/><path d="M20 8V20L27 27" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </div>
+          <h3 class="service-title">Prime Locations</h3>
+          <p class="service-desc">Strategic sites selected for connectivity, growth potential, and lifestyle excellence across Punjab.</p>
+        </div>
+        <div class="service-card glass-card">
+          <div class="service-icon">
+            <svg viewBox="0 0 40 40" fill="none"><rect x="8" y="6" width="24" height="28" rx="2" stroke="white" stroke-width="1.5"/><path d="M14 14H26M14 19H26M14 24H20" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </div>
+          <h3 class="service-title">Legal Assistance</h3>
+          <p class="service-desc">Complete documentation support and legal guidance to ensure every transaction is secure and compliant.</p>
+        </div>
+        <div class="service-card glass-card">
+          <div class="service-icon">
+            <svg viewBox="0 0 40 40" fill="none"><path d="M8 32V16L20 8L32 16V32H24V24H16V32H8Z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/></svg>
+          </div>
+          <h3 class="service-title">Property Management</h3>
+          <p class="service-desc">From acquisition to maintenance, we handle every detail so your investment performs without effort.</p>
+        </div>
+        <div class="service-card glass-card">
+          <div class="service-icon">
+            <svg viewBox="0 0 40 40" fill="none"><path d="M10 30L10 20L20 8L30 20V30" stroke="white" stroke-width="1.5" stroke-linejoin="round"/><polyline points="10,30 30,30" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M15 30V22H25V30" stroke="white" stroke-width="1.5"/></svg>
+          </div>
+          <h3 class="service-title">Growth Focus</h3>
+          <p class="service-desc">Data-driven strategies that identify high-appreciation corridors to multiply your wealth over time.</p>
+        </div>
+        <div class="service-card glass-card">
+          <div class="service-icon">
+            <svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="14" r="6" stroke="white" stroke-width="1.5"/><path d="M8 34C8 27.4 13.4 22 20 22C26.6 22 32 27.4 32 34" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </div>
+          <h3 class="service-title">Personalized Consultation</h3>
+          <p class="service-desc">One-on-one attention from Inder and Vivek Latawa — because your investment deserves personal expertise.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SHOWCASE HORIZONTAL SCROLL -->
+  <section class="showcase-section" id="showcase">
+    <div class="section-header container">
+      <p class="section-eyebrow">Gallery</p>
+      <h2 class="section-heading split-heading">Our<br/><em>Projects</em></h2>
+    </div>
+    <div class="showcase-pin" id="showcasePin">
+      <div class="showcase-track" id="showcaseTrack">
+        <div class="showcase-slide">
+          <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=900&q=80&fit=crop" alt="Project 1" />
+          <div class="slide-label"><span>01</span><p>Modern Villa — Chandigarh</p></div>
+        </div>
+        <div class="showcase-slide">
+          <img src="https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=900&q=80&fit=crop" alt="Project 2" />
+          <div class="slide-label"><span>02</span><p>Sky Residence — Mohali</p></div>
+        </div>
+        <div class="showcase-slide">
+          <img src="https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=900&q=80&fit=crop" alt="Project 3" />
+          <div class="slide-label"><span>03</span><p>Luxury Interior — Ludhiana</p></div>
+        </div>
+        <div class="showcase-slide">
+          <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=900&q=80&fit=crop" alt="Project 4" />
+          <div class="slide-label"><span>04</span><p>Elite Estate — Amritsar</p></div>
+        </div>
+        <div class="showcase-slide">
+          <img src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=900&q=80&fit=crop" alt="Project 5" />
+          <div class="slide-label"><span>05</span><p>Premium Apartment — Firozpur</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section class="process-section" id="process">
+    <div class="container">
+      <div class="section-header">
+        <p class="section-eyebrow">How It Works</p>
+        <h2 class="section-heading split-heading">Simple Path to<br/><em>Ownership</em></h2>
+      </div>
+      <div class="process-timeline">
+        <div class="process-line"><div class="process-line-fill" id="processLineFill"></div></div>
+        <div class="process-steps">
+          <div class="process-step">
+            <div class="step-num">01</div>
+            <div class="step-dot"></div>
+            <h3 class="step-title">Consultation</h3>
+            <p class="step-desc">We understand your goals, budget, and vision in a detailed, personal consultation.</p>
+          </div>
+          <div class="process-step">
+            <div class="step-num">02</div>
+            <div class="step-dot"></div>
+            <h3 class="step-title">Property Selection</h3>
+            <p class="step-desc">Our experts shortlist properties perfectly matched to your requirements.</p>
+          </div>
+          <div class="process-step">
+            <div class="step-num">03</div>
+            <div class="step-dot"></div>
+            <h3 class="step-title">Documentation</h3>
+            <p class="step-desc">We handle all legal paperwork, verifications, and regulatory compliance.</p>
+          </div>
+          <div class="process-step">
+            <div class="step-num">04</div>
+            <div class="step-dot"></div>
+            <h3 class="step-title">Ownership</h3>
+            <p class="step-desc">Receive the keys to your new property — and a lifelong partner in growth.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="testimonials-section" id="testimonials">
+    <div class="container">
+      <div class="section-header">
+        <p class="section-eyebrow">Client Stories</p>
+        <h2 class="section-heading split-heading">Voices of<br/><em>Trust</em></h2>
+      </div>
+      <div class="testimonials-slider">
+        <div class="testi-track" id="testiTrack">
+
+          <div class="testi-card glass-card">
+            <div class="testi-stars">★★★★★</div>
+            <p class="testi-text">"Inder ji guided us through every step. We found our dream home in Chandigarh at the right price, with zero legal complications. Truly a trustworthy team."</p>
+            <div class="testi-author">
+              <div class="testi-avatar">RS</div>
+              <div><p class="testi-name">Rajinder Singh</p><p class="testi-role">Homebuyer, Chandigarh</p></div>
+            </div>
+          </div>
+
+          <div class="testi-card glass-card">
+            <div class="testi-stars">★★★★★</div>
+            <p class="testi-text">"Vivek helped us identify a commercial plot that tripled in value within 3 years. Latawa Real Estate understands the market like no one else."</p>
+            <div class="testi-author">
+              <div class="testi-avatar">PK</div>
+              <div><p class="testi-name">Priya Kapoor</p><p class="testi-role">Investor, Mohali</p></div>
+            </div>
+          </div>
+
+          <div class="testi-card glass-card">
+            <div class="testi-stars">★★★★★</div>
+            <p class="testi-text">"Professional, transparent, and genuinely caring about your investment. Latawa Real Estate is the only name I recommend to family and friends."</p>
+            <div class="testi-author">
+              <div class="testi-avatar">AS</div>
+              <div><p class="testi-name">Amrit Sandhu</p><p class="testi-role">NRI Investor, Ludhiana</p></div>
+            </div>
+          </div>
+
+          <div class="testi-card glass-card">
+            <div class="testi-stars">★★★★★</div>
+            <p class="testi-text">"From the very first meeting, I knew I was in safe hands. The documentation was handled perfectly and the handover was seamless. Exceptional service."</p>
+            <div class="testi-author">
+              <div class="testi-avatar">MK</div>
+              <div><p class="testi-name">Manpreet Kaur</p><p class="testi-role">Homeowner, Firozpur</p></div>
+            </div>
+          </div>
+
+        </div>
+        <div class="testi-controls">
+          <button class="testi-btn" id="testiPrev" aria-label="Previous">←</button>
+          <div class="testi-dots" id="testiDots"></div>
+          <button class="testi-btn" id="testiNext" aria-label="Next">→</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section" id="cta">
+    <div class="cta-mesh" id="ctaMesh"></div>
+    <div class="container cta-inner">
+      <p class="section-eyebrow">Get Started</p>
+      <h2 class="cta-heading split-heading">Your Next Investment<br/><em>Starts Here</em></h2>
+      <p class="cta-sub">Whether you're buying your first home or expanding your portfolio,<br/>we're ready to guide every step of your journey.</p>
+      <div class="cta-btns">
+        <a href="#contact" class="btn-primary magnetic">Start Your Journey</a>
+        <a href="tel:+919988500421" class="btn-ghost magnetic">Call Us Now</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="contact-section" id="contact">
+    <div class="container contact-grid">
+      <div class="contact-info">
+        <p class="section-eyebrow">Get In Touch</p>
+        <h2 class="section-heading split-heading">Let's Find<br/>Your <em>Home</em></h2>
+        <div class="contact-details">
+          <div class="contact-item">
+            <div class="contact-icon">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 014.36 12 19.79 19.79 0 011.3 3.44 2 2 0 013.28 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L7.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z" stroke="white" stroke-width="1.5"/></svg>
+            </div>
+            <div>
+              <p class="contact-label">Inder Latawa</p>
+              <a href="tel:+919988500421" class="contact-value">+91 98885 00421</a>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 014.36 12 19.79 19.79 0 011.3 3.44 2 2 0 013.28 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L7.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z" stroke="white" stroke-width="1.5"/></svg>
+            </div>
+            <div>
+              <p class="contact-label">Vivek Latawa</p>
+              <a href="tel:+919814978768" class="contact-value">+91 98149 78768</a>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" stroke="white" stroke-width="1.5"/><circle cx="12" cy="10" r="3" stroke="white" stroke-width="1.5"/></svg>
+            </div>
+            <div>
+              <p class="contact-label">Office</p>
+              <p class="contact-value">VPO Firozpur, Near Mata Mansa Devi Temple, Punjab</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="contact-form-wrap glass-card">
+        <h3 class="form-title">Send a Message</h3>
+        <form class="contact-form" id="contactForm" onsubmit="handleFormSubmit(event)">
+          <div class="form-group">
+            <input type="text" name="name" placeholder="Your Full Name" required class="form-input" />
+          </div>
+          <div class="form-group">
+            <input type="tel" name="phone" placeholder="Phone Number" required class="form-input" />
+          </div>
+          <div class="form-group">
+            <input type="email" name="email" placeholder="Email Address" class="form-input" />
+          </div>
+          <div class="form-group">
+            <select name="interest" class="form-input form-select">
+              <option value="" disabled selected>Area of Interest</option>
+              <option>Residential Property</option>
+              <option>Commercial Space</option>
+              <option>Investment Advisory</option>
+              <option>Property Management</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <textarea name="message" placeholder="Your Message" rows="4" class="form-input"></textarea>
+          </div>
+          <button type="submit" class="btn-primary full-width magnetic">Send Enquiry</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer" id="footer">
+    <div class="footer-top container">
+      <div class="footer-brand">
+        <a href="#hero" class="nav-logo footer-logo">
+          <svg viewBox="0 0 80 66" fill="none" xmlns="http://www.w3.org/2000/svg" class="logo-svg">
+            <path d="M40 3 L68 23 L68 27 L60 27 L60 23 L40 10 L20 23 L20 27 L12 27 L12 23 Z" fill="white"/>
+            <path d="M22 25 L22 58 L33 58 L33 40 L47 40 L47 58 L58 58 L58 25 L40 13 Z" fill="none" stroke="white" stroke-width="2.2"/>
+            <rect x="34" y="27" width="12" height="11" rx="0.5" fill="none" stroke="white" stroke-width="1.8"/>
+            <line x1="40" y1="27" x2="40" y2="38" stroke="white" stroke-width="1.2"/>
+            <line x1="34" y1="32.5" x2="46" y2="32.5" stroke="white" stroke-width="1.2"/>
+          </svg>
+          <div class="logo-text">
+            <span class="logo-name">LATAWA</span>
+            <span class="logo-sub">REAL ESTATE</span>
+          </div>
+        </a>
+        <p class="footer-tagline">Trust · Value · Growth</p>
+        <p class="footer-about">Crafting premium property experiences across Punjab with integrity, expertise, and a passion for growth.</p>
+      </div>
+      <div class="footer-links-wrap">
+        <div class="footer-col">
+          <h4 class="footer-col-title">Navigate</h4>
+          <ul>
+            <li><a href="#hero">Home</a></li>
+            <li><a href="#properties">Properties</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#services">Services</a></li>
+            <li><a href="#showcase">Projects</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-col-title">Contact</h4>
+          <ul>
+            <li><a href="tel:+919988500421">+91 98885 00421</a></li>
+            <li><a href="tel:+919814978768">+91 98149 78768</a></li>
+            <li><a href="mailto:info@latawarealestate.com">info@latawarealestate.com</a></li>
+            <li>VPO Firozpur, Punjab</li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-col-title">Services</h4>
+          <ul>
+            <li>Residential Sales</li>
+            <li>Commercial Spaces</li>
+            <li>Legal Assistance</li>
+            <li>Investment Advisory</li>
+            <li>Property Management</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom container">
+      <p>© 2024 Latawa Real Estate. All rights reserved.</p>
+      <p class="footer-credit">Trust · Value · Growth</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
