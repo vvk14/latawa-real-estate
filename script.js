@@ -1,8 +1,10 @@
 /* =============================================
-   LATAWA REAL ESTATE — script.js (OPTIMIZED)
+   LATAWA REAL ESTATE — script.js (v3)
    - Native scroll (no Lenis = no lag)
    - Default system cursor
    - Lightweight animations
+   - Hero intro now animates pre-existing markup
+     (fixes headline rendering twice after preload)
    ============================================= */
 
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
@@ -119,16 +121,22 @@ function initMobileMenu() {
    5. HERO INTRO
    ============================================= */
 function initHeroIntro() {
-  if (PREFERS_REDUCED) return;
-  const lines = document.querySelectorAll('.hero-line');
-  lines.forEach((line) => {
-    const text = line.innerHTML;
-    line.innerHTML = `<span class="hero-line-inner">${text}</span>`;
-  });
+  // Markup already contains .hero-line > .hero-line-inner (see index.html).
+  // CSS hides .hero-line-inner by default (opacity:0, translateY(105%))
+  // so there is no flash of unanimated text before GSAP takes over.
+  // Previously this function rewrote .innerHTML at runtime to inject the
+  // wrapper span, which left the raw text visible at full opacity for a
+  // moment right after the preloader faded — reading as if the headline
+  // rendered twice. Animating the pre-built markup removes that flash.
+  if (PREFERS_REDUCED) {
+    gsap.set('.hero-line-inner', { opacity: 1, y: 0 });
+    gsap.set('.hero-eyebrow, .hero-sub, .hero-btns', { opacity: 1, y: 0 });
+    return;
+  }
 
-  const tl = gsap.timeline({ delay: 0.3 });
-  tl.from('.hero-line-inner', {
-    y: '105%', duration: 1, ease: 'power4.out', stagger: 0.12
+  const tl = gsap.timeline({ delay: 0.2 });
+  tl.to('.hero-line-inner', {
+    y: '0%', opacity: 1, duration: 1, ease: 'power4.out', stagger: 0.12
   })
   .to('.hero-eyebrow', { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' }, 0.15)
   .to('.hero-sub', { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' }, '-=0.4')
@@ -307,6 +315,7 @@ function initScrollReveals() {
     { sel: '.service-card', stagger: 0.07 },
     { sel: '.trust-card', stagger: 0.07 },
     { sel: '.process-step', stagger: 0.1 },
+    { sel: '.gallery-item', stagger: 0.06 },
   ];
   staggerGroups.forEach(({ sel, stagger }) => {
     const items = document.querySelectorAll(sel);
@@ -364,34 +373,7 @@ function initParallax() {
 }
 
 /* =============================================
-   13. HORIZONTAL SHOWCASE
-   ============================================= */
-function initShowcase() {
-  if (IS_MOBILE) return;
-  const pin = document.getElementById('showcasePin');
-  const track = document.getElementById('showcaseTrack');
-  if (!pin || !track) return;
-
-  const build = () => {
-    ScrollTrigger.getById('showcaseScroll')?.kill();
-    const scrollAmt = track.scrollWidth - window.innerWidth;
-    if (scrollAmt <= 0) return;
-    gsap.to(track, {
-      x: -scrollAmt, ease: 'none',
-      scrollTrigger: {
-        id: 'showcaseScroll',
-        trigger: pin, start: 'top top',
-        end: () => '+=' + scrollAmt,
-        scrub: 1.5, pin: true, anticipatePin: 1, invalidateOnRefresh: true
-      }
-    });
-  };
-  build();
-  window.addEventListener('resize', () => ScrollTrigger.refresh(), { passive: true });
-}
-
-/* =============================================
-   14. PROCESS LINE
+   13. PROCESS LINE
    ============================================= */
 function initProcessLine() {
   const fill = document.getElementById('processLineFill');
@@ -407,7 +389,7 @@ function initProcessLine() {
 }
 
 /* =============================================
-   15. TESTIMONIALS SLIDER
+   14. TESTIMONIALS SLIDER
    ============================================= */
 function initTestimonials() {
   const track = document.getElementById('testiTrack');
@@ -434,7 +416,7 @@ function initTestimonials() {
 
   const update = () => {
     const cw = cards[0].getBoundingClientRect().width;
-    gsap.to(track, { x: -(index * (cw + 24)), duration: 0.5, ease: 'power3.out' });
+    gsap.to(track, { x: -(index * (cw + 18)), duration: 0.5, ease: 'power3.out' });
     Array.from(dotsWrap.children).forEach((d, i) => d.classList.toggle('active', i === index));
   };
 
@@ -458,7 +440,7 @@ function initTestimonials() {
 }
 
 /* =============================================
-   16. FORM HANDLER
+   15. FORM HANDLER
    ============================================= */
 function handleFormSubmit(event) {
   event.preventDefault();
@@ -483,7 +465,7 @@ function handleFormSubmit(event) {
 window.handleFormSubmit = handleFormSubmit;
 
 /* =============================================
-   17. REFRESH
+   16. REFRESH
    ============================================= */
 window.addEventListener('load', () => ScrollTrigger.refresh(), { passive: true });
 
@@ -504,7 +486,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initSplitHeadings();
   initScrollReveals();
   initParallax();
-  initShowcase();
   initProcessLine();
   initTestimonials();
 
