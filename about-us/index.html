@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>About Us — LATAWA REAL ESTATE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+<style>
+/* =============================================
+   LATAWA REAL ESTATE — About Us page
+   Self-contained: HTML + CSS + JS in one file
+   Matches main site token system (Fraunces + Inter,
+   dark glass aesthetic, same type scale)
+   ============================================= */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --black:      #000000;
+  --dark:       #080808;
+  --dark2:      #0e0e0e;
+  --dark3:      #161616;
+  --dark4:      #1e1e1e;
+  --silver:     #C8C8C8;
+  --silver2:    #A0A0A0;
+  --offwhite:   #F0F0F0;
+  --white:      #ffffff;
+  --accent:     #C9A769; /* warm brass — unique to this page's signature timeline */
+
+  --glass-bg:      rgba(255,255,255,0.055);
+  --glass-border:  rgba(255,255,255,0.11);
+  --glass-hover:   rgba(255,255,255,0.09);
+
+  --container: 1400px;
+  --radius:    16px;
+  --radius-sm: 10px;
+  --transition: 0.38s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+  --font-display: 'Fraunces', serif;
+  --font-body: 'Inter', sans-serif;
+
+  --fs-h1:      clamp(32px, 3.6vw, 48px);
+  --fs-h2:      clamp(26px, 2.6vw, 36px);
+  --fs-h3:      17px;
+  --fs-body-lg: 14px;
+  --fs-body:    13px;
+  --fs-body-sm: 12px;
+  --fs-eyebrow: 10px;
+  --fs-micro:   9px;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--dark);
+  color: var(--offwhite);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+a { color: inherit; text-decoration: none; }
+ul { list-style: none; }
+img { display: block; width: 100%; height: 100%; object-fit: cover; }
+button { border: none; background: none; font-family: var(--font-body); }
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--black); }
+::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 2px; }
+::selection { background: rgba(255,255,255,0.18); color: white; }
+
+.container { max-width: var(--container); margin: 0 auto; padding: 0 40px; }
+
+:focus-visible {
+  outline: 1px solid rgba(201,167,105,0.8);
+  outline-offset: 3px;
+}
+
+/* =============================================
+   PRELOADER
+   ============================================= */
+.preloader {
+  position: fixed; inset: 0;
+  background: var(--black);
+  z-index: 9999;
+  display: flex; align-items: center; justify-content: center;
+}
+.preloader-inner { text-align: center; }
+.logo-svg-pre {
+  width: 60px; margin: 0 auto 24px;
+  opacity: 0; animation: fadeUp 0.8s 0.3s forwards;
+}
+.preloader-bar {
+  width: 160px; height: 1px;
+  background: rgba(255,255,255,0.08);
+  margin: 0 auto 16px; overflow: hidden;
+  border-radius: 1px;
+}
+.preloader-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--silver2), var(--silver));
+  width: 0%;
+  transition: width 0.08s linear;
+}
+.preloader-text {
+  font-size: var(--fs-micro); letter-spacing: 4px;
+  color: rgba(255,255,255,0.3); font-weight: 500;
+}
+@keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeIn { to { opacity: 1; } }
+
+/* =============================================
+   NAVBAR
+   ============================================= */
+.navbar {
+  position: fixed;
+  top: 18px; left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  width: calc(100% - 48px);
+  max-width: 1340px;
+  border-radius: 100px;
+  padding: 11px 22px;
+  background: rgba(8,8,8,0.55);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255,255,255,0.09);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  transition: var(--transition);
+}
+.navbar.scrolled {
+  background: rgba(6,6,6,0.85);
+  border-color: rgba(255,255,255,0.13);
+  top: 10px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+}
+.nav-container { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.nav-logo { display: flex; align-items: center; gap: 9px; }
+.logo-svg { width: 30px; flex-shrink: 0; }
+.logo-text { display: flex; flex-direction: column; line-height: 1; }
+.logo-name {
+  font-family: var(--font-display);
+  font-size: 13px; font-weight: 600;
+  letter-spacing: 2px; color: white;
+}
+.logo-sub {
+  font-size: 6.5px; letter-spacing: 2px;
+  color: rgba(255,255,255,0.45); font-weight: 400; margin-top: 2px;
+}
+.nav-links { display: flex; align-items: center; gap: 2px; }
+.nav-link {
+  font-size: 12.5px; letter-spacing: 0.2px;
+  color: rgba(255,255,255,0.65);
+  padding: 8px 13px;
+  border-radius: 100px;
+  transition: color 0.25s, background 0.25s;
+  font-weight: 500; position: relative;
+}
+.nav-link::after {
+  content: ''; position: absolute;
+  bottom: 5px; left: 50%; transform: translateX(-50%);
+  width: 0; height: 1px; background: rgba(255,255,255,0.6);
+  transition: width 0.3s ease;
+}
+.nav-link:hover { color: white; }
+.nav-link:hover::after { width: 55%; }
+.nav-link.active { color: white; }
+.nav-link.active::after { width: 55%; background: var(--accent); }
+.nav-link.contact-btn {
+  background: rgba(255,255,255,0.09);
+  color: white; border: 1px solid rgba(255,255,255,0.14);
+}
+.nav-link.contact-btn:hover { background: rgba(255,255,255,0.16); }
+.nav-link.contact-btn::after { display: none; }
+.hamburger { display: none; flex-direction: column; gap: 5px; padding: 4px; cursor: pointer; }
+.hamburger span { display: block; width: 20px; height: 1.5px; background: white; transition: var(--transition); }
+
+/* Mobile menu */
+.mobile-menu {
+  display: none; position: fixed; inset: 0;
+  background: rgba(4,4,4,0.97);
+  backdrop-filter: blur(28px);
+  z-index: 999;
+  align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 0.35s;
+}
+.mobile-menu.open { opacity: 1; }
+.mobile-menu ul { text-align: center; }
+.mobile-menu li { padding: 12px 0; }
+.mob-link {
+  font-family: var(--font-display);
+  font-size: 26px; font-weight: 500;
+  color: rgba(255,255,255,0.75);
+  transition: color 0.3s;
+}
+.mob-link:hover, .mob-link.active { color: white; }
+
+/* =============================================
+   GLASS CARD
+   ============================================= */
+.glass-card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  border-radius: var(--radius);
+  transition: var(--transition);
+}
+.glass-card:hover {
+  background: var(--glass-hover);
+  border-color: rgba(255,255,255,0.17);
+}
+
+/* =============================================
+   BUTTONS
+   ============================================= */
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: white; color: black;
+  padding: 13px 28px; border-radius: 100px;
+  font-size: 12.5px; font-weight: 600; letter-spacing: 0.3px;
+  transition: var(--transition); cursor: pointer;
+}
+.btn-primary:hover { background: var(--silver); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255,255,255,0.12); }
+
+.btn-ghost {
+  display: inline-flex; align-items: center; gap: 8px;
+  border: 1px solid rgba(255,255,255,0.28);
+  color: white; padding: 13px 28px; border-radius: 100px;
+  font-size: 12.5px; font-weight: 600; letter-spacing: 0.3px;
+  transition: var(--transition); cursor: pointer;
+}
+.btn-ghost:hover { border-color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.06); transform: translateY(-2px); }
+
+/* =============================================
+   SECTION COMMONS
+   ============================================= */
+.section-eyebrow {
+  font-size: var(--fs-eyebrow); letter-spacing: 3.5px; text-transform: uppercase;
+  color: rgba(255,255,255,0.38); margin-bottom: 12px; font-weight: 500;
+  display: inline-flex; align-items: center; gap: 10px;
+}
+.section-eyebrow::before {
+  content: ''; width: 14px; height: 1px; background: var(--accent);
+  display: inline-block;
+}
+.section-heading {
+  font-family: var(--font-display);
+  font-size: var(--fs-h2);
+  font-weight: 500; line-height: 1.18;
+  color: var(--offwhite); margin-bottom: 18px;
+  letter-spacing: -0.2px;
+}
+.section-heading em { font-style: italic; color: rgba(255,255,255,0.42); }
+.section-desc {
+  font-size: var(--fs-body);
+  color: rgba(255,255,255,0.42);
+  max-width: 460px; line-height: 1.7;
+}
+.section-header { margin-bottom: 48px; }
+.section-header.center { text-align: center; margin-left: auto; margin-right: auto; }
+.section-header.center .section-desc { margin-left: auto; margin-right: auto; }
+.section-header.center .section-eyebrow { justify-content: center; }
+
+/* =============================================
+   PAGE HERO
+   ============================================= */
+.page-hero {
+  position: relative;
+  min-height: 78vh;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+  padding-top: 100px;
+}
+.page-hero-bg { position: absolute; inset: 0; z-index: 0; }
+.page-hero-bg img { filter: grayscale(25%) brightness(0.26); }
+.page-hero-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.5) 55%, rgba(8,8,8,0.95) 100%);
+}
+.page-hero-content {
+  position: relative; z-index: 2;
+  text-align: center; max-width: 760px; padding: 0 24px;
+}
+.breadcrumb {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  font-size: var(--fs-eyebrow); letter-spacing: 2px; text-transform: uppercase;
+  color: rgba(255,255,255,0.4); margin-bottom: 24px;
+}
+.breadcrumb a { color: rgba(255,255,255,0.6); transition: color 0.25s; }
+.breadcrumb a:hover { color: white; }
+.breadcrumb-sep { color: rgba(255,255,255,0.2); }
+.page-hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(38px, 5.5vw, 64px);
+  font-weight: 500; line-height: 1.12; color: white;
+  margin-bottom: 20px; letter-spacing: -0.4px;
+}
+.page-hero-title em { font-style: italic; color: rgba(255,255,255,0.5); }
+.page-hero-sub {
+  font-size: var(--fs-body-lg); color: rgba(255,255,255,0.5);
+  line-height: 1.75; max-width: 540px; margin: 0 auto;
+}
+
+/* =============================================
+   STORY
+   ============================================= */
+.story-section { padding: 100px 0; background: var(--dark); }
+.story-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 64px; align-items: center;
+}
+.story-image-wrap { position: relative; }
+.story-img-frame {
+  border-radius: var(--radius); overflow: hidden; height: 480px;
+  border: 1px solid rgba(255,255,255,0.07);
+}
+.story-img-frame img { filter: brightness(0.85) contrast(1.05); transition: transform 0.8s ease; }
+.story-img-frame:hover img { transform: scale(1.04); }
+.story-float-card {
+  position: absolute; bottom: -18px; right: -18px;
+  padding: 20px 24px; text-align: center;
+  background: rgba(20,20,20,0.85);
+  border: 1px solid rgba(255,255,255,0.13);
+  backdrop-filter: blur(20px);
+  border-radius: var(--radius);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+}
+.story-float-card .float-num {
+  font-family: var(--font-display);
+  font-size: 32px; font-weight: 600; color: var(--accent); line-height: 1;
+}
+.story-float-card .float-label {
+  font-size: 10px; color: rgba(255,255,255,0.38);
+  letter-spacing: 0.6px; margin-top: 4px;
+}
+.story-para {
+  font-size: var(--fs-body); color: rgba(255,255,255,0.52);
+  line-height: 1.85; margin-bottom: 16px;
+}
+
+/* =============================================
+   MISSION / VISION — distinct two-card module
+   ============================================= */
+.mv-section { padding: 0 0 100px; background: var(--dark); }
+.mv-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.mv-card {
+  padding: 44px 40px;
+  border-radius: var(--radius);
+  position: relative;
+  overflow: hidden;
+}
+.mv-card.mission {
+  background: linear-gradient(150deg, rgba(255,255,255,0.05), rgba(255,255,255,0.015));
+  border: 1px solid rgba(255,255,255,0.09);
+}
+.mv-card.vision {
+  background: linear-gradient(150deg, rgba(201,167,105,0.1), rgba(201,167,105,0.02));
+  border: 1px solid rgba(201,167,105,0.18);
+}
+.mv-icon {
+  width: 42px; height: 42px; margin-bottom: 22px; opacity: 0.85;
+}
+.mv-card.vision .mv-icon { opacity: 1; }
+.mv-label {
+  font-size: var(--fs-eyebrow); letter-spacing: 3px; text-transform: uppercase;
+  color: rgba(255,255,255,0.4); margin-bottom: 12px; font-weight: 600;
+}
+.mv-card.vision .mv-label { color: var(--accent); }
+.mv-title {
+  font-family: var(--font-display);
+  font-size: 24px; font-weight: 500; color: white; margin-bottom: 14px;
+}
+.mv-text {
+  font-size: var(--fs-body); color: rgba(255,255,255,0.5); line-height: 1.8;
+}
+
+/* =============================================
+   FOUNDERS
+   ============================================= */
+.founders-section { padding: 100px 0; background: var(--dark2); }
+.founders-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
+}
+.founder-card {
+  padding: 0; overflow: hidden; border-radius: var(--radius);
+  background: var(--dark3);
+  border: 1px solid rgba(255,255,255,0.07);
+  transition: var(--transition);
+}
+.founder-card:hover { border-color: rgba(255,255,255,0.15); transform: translateY(-4px); }
+.founder-img-wrap { height: 320px; overflow: hidden; position: relative; }
+.founder-img-wrap img { filter: brightness(0.82) saturate(0.95); transition: transform 0.6s ease; }
+.founder-card:hover .founder-img-wrap img { transform: scale(1.05); }
+.founder-role-badge {
+  position: absolute; top: 16px; left: 16px;
+  background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.15);
+  backdrop-filter: blur(10px);
+  color: white; font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase;
+  padding: 6px 13px; border-radius: 100px;
+}
+.founder-info { padding: 26px 28px 30px; }
+.founder-name {
+  font-family: var(--font-display);
+  font-size: 22px; font-weight: 500; color: white; margin-bottom: 4px;
+}
+.founder-title {
+  font-size: var(--fs-body-sm); color: var(--accent); letter-spacing: 0.4px;
+  margin-bottom: 14px; font-weight: 500;
+}
+.founder-bio {
+  font-size: var(--fs-body); color: rgba(255,255,255,0.48); line-height: 1.8;
+}
+
+/* =============================================
+   MILESTONES TIMELINE — signature element
+   Real chronological sequence: order carries
+   information, so a vertical timeline is the
+   structurally honest layout for this content.
+   ============================================= */
+.timeline-section { padding: 100px 0; background: var(--dark); }
+.timeline {
+  position: relative;
+  max-width: 760px; margin: 0 auto;
+  padding-left: 28px;
+}
+.timeline::before {
+  content: '';
+  position: absolute; top: 6px; bottom: 6px; left: 0;
+  width: 1px;
+  background: linear-gradient(to bottom, rgba(201,167,105,0.6), rgba(255,255,255,0.06));
+}
+.timeline-item {
+  position: relative;
+  padding-bottom: 52px;
+  padding-left: 36px;
+}
+.timeline-item:last-child { padding-bottom: 0; }
+.timeline-dot {
+  position: absolute; left: -28px; top: 4px;
+  width: 11px; height: 11px; border-radius: 50%;
+  background: var(--dark);
+  border: 2px solid var(--accent);
+}
+.timeline-year {
+  font-family: var(--font-display);
+  font-size: 26px; font-weight: 600; color: var(--accent);
+  line-height: 1; margin-bottom: 8px;
+}
+.timeline-title {
+  font-size: 15.5px; font-weight: 600; color: white; margin-bottom: 6px;
+}
+.timeline-text {
+  font-size: var(--fs-body); color: rgba(255,255,255,0.48); line-height: 1.75;
+  max-width: 520px;
+}
+
+/* =============================================
+   CORE VALUES
+   ============================================= */
+.values-section { padding: 100px 0; background: var(--dark2); }
+.values-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+}
+.value-card {
+  padding: 28px 24px; border-radius: var(--radius);
+  background: var(--glass-bg);
+  border: 1px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(16px);
+  transition: var(--transition);
+}
+.value-card:hover {
+  transform: translateY(-4px);
+  background: rgba(255,255,255,0.075);
+  border-color: rgba(255,255,255,0.15);
+}
+.value-icon { width: 34px; height: 34px; margin-bottom: 16px; color: var(--accent); }
+.value-title {
+  font-family: var(--font-display);
+  font-size: 15.5px; font-weight: 500; color: white; margin-bottom: 8px;
+}
+.value-desc { font-size: var(--fs-body-sm); color: rgba(255,255,255,0.42); line-height: 1.65; }
+
+/* =============================================
+   STATS STRIP
+   ============================================= */
+.stats-section { padding: 80px 0; background: var(--dark3); }
+.stats-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: var(--radius); overflow: hidden;
+}
+.stat-card {
+  padding: 40px 24px; text-align: center;
+  border-right: 1px solid rgba(255,255,255,0.07);
+  transition: background 0.35s;
+}
+.stat-card:last-child { border-right: none; }
+.stat-card:hover { background: rgba(255,255,255,0.04); }
+.stat-num {
+  font-family: var(--font-display);
+  font-size: clamp(34px, 3.4vw, 48px);
+  font-weight: 600; color: white; line-height: 1;
+}
+.stat-num span { color: rgba(255,255,255,0.28); font-size: 22px; }
+.stat-label {
+  font-size: 10.5px; letter-spacing: 1.8px; text-transform: uppercase;
+  color: rgba(255,255,255,0.34); margin-top: 8px; font-weight: 500;
+}
+
+/* =============================================
+   WHY CHOOSE — differentiator rows
+   ============================================= */
+.why-section { padding: 100px 0; background: var(--dark); }
+.why-list { max-width: 880px; margin: 0 auto; }
+.why-row {
+  display: grid; grid-template-columns: 90px 1fr 1fr;
+  gap: 28px; align-items: start;
+  padding: 28px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+.why-row:first-child { border-top: 1px solid rgba(255,255,255,0.07); }
+.why-num {
+  font-family: var(--font-display);
+  font-size: 22px; color: rgba(255,255,255,0.25); font-weight: 500;
+}
+.why-title { font-size: 15.5px; font-weight: 600; color: white; }
+.why-desc { font-size: var(--fs-body); color: rgba(255,255,255,0.46); line-height: 1.75; }
+
+/* =============================================
+   CTA
+   ============================================= */
+.cta-section {
+  padding: 110px 0; background: var(--dark2);
+  position: relative; overflow: hidden;
+}
+.cta-mesh {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 55% 65% at 15% 50%, rgba(201,167,105,0.08) 0%, transparent 70%),
+    radial-gradient(ellipse 45% 60% at 85% 30%, rgba(255,255,255,0.05) 0%, transparent 70%);
+}
+.cta-inner {
+  position: relative; z-index: 1;
+  text-align: center; max-width: 680px; margin: 0 auto;
+}
+.cta-heading {
+  font-family: var(--font-display);
+  font-size: var(--fs-h2);
+  font-weight: 500; line-height: 1.18; color: white; margin-bottom: 18px;
+}
+.cta-heading em { font-style: italic; color: var(--accent); }
+.cta-sub {
+  font-size: var(--fs-body); color: rgba(255,255,255,0.42);
+  line-height: 1.7; margin-bottom: 36px;
+}
+.cta-btns { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; }
+
+/* =============================================
+   FOOTER
+   ============================================= */
+.footer {
+  background: var(--black);
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+.footer-top {
+  display: grid; grid-template-columns: 1fr 2fr;
+  gap: 64px; padding-top: 60px; padding-bottom: 44px;
+}
+.footer-logo { margin-bottom: 12px; display: inline-flex; }
+.footer-tagline {
+  font-size: var(--fs-micro); letter-spacing: 2.5px;
+  color: rgba(255,255,255,0.22); text-transform: uppercase;
+  margin-bottom: 12px; margin-top: 2px;
+}
+.footer-about {
+  font-size: var(--fs-body-sm); color: rgba(255,255,255,0.32);
+  line-height: 1.7; max-width: 280px;
+}
+.footer-links-wrap { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+.footer-col-title {
+  font-size: 9.5px; letter-spacing: 2px; text-transform: uppercase;
+  color: rgba(255,255,255,0.38); margin-bottom: 16px; font-weight: 600;
+}
+.footer-col ul { display: flex; flex-direction: column; gap: 8px; }
+.footer-col ul li,
+.footer-col ul a {
+  font-size: var(--fs-body-sm); color: rgba(255,255,255,0.28); transition: color 0.3s;
+}
+.footer-col ul a:hover { color: rgba(255,255,255,0.65); }
+.footer-bottom {
+  border-top: 1px solid rgba(255,255,255,0.05);
+  padding: 20px 40px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.footer-bottom p,
+.footer-credit {
+  font-size: 10.5px; color: rgba(255,255,255,0.18); letter-spacing: 0.4px;
+}
+
+/* =============================================
+   ANIMATION HELPERS
+   ============================================= */
+.reveal-up { opacity: 0; transform: translateY(28px); }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-up { opacity: 1 !important; transform: none !important; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* =============================================
+   RESPONSIVE
+   ============================================= */
+@media (max-width: 1100px) {
+  .story-grid    { grid-template-columns: 1fr; gap: 40px; }
+  .story-img-frame { height: 380px; }
+  .story-float-card { right: 12px; bottom: -16px; }
+  .mv-grid       { grid-template-columns: 1fr; }
+  .founders-grid { grid-template-columns: 1fr; }
+  .values-grid   { grid-template-columns: repeat(2, 1fr); }
+  .stats-grid    { grid-template-columns: repeat(2, 1fr); }
+  .stat-card:nth-child(2) { border-right: none; }
+  .stat-card     { border-bottom: 1px solid rgba(255,255,255,0.07); }
+  .why-row       { grid-template-columns: 60px 1fr; }
+  .why-row .why-desc { grid-column: 2; }
+  .footer-top    { gap: 40px; }
+}
+
+@media (max-width: 768px) {
+  .container { padding: 0 20px; }
+  .navbar      { width: calc(100% - 26px); top: 12px; padding: 11px 16px; }
+  .nav-links   { display: none; }
+  .hamburger   { display: flex; }
+  .page-hero { padding-top: 84px; min-height: 64vh; }
+  .values-grid { grid-template-columns: 1fr; }
+  .stats-grid  { grid-template-columns: 1fr 1fr; }
+  .why-row     { grid-template-columns: 1fr; gap: 8px; }
+  .why-row .why-desc { grid-column: 1; }
+  .timeline    { padding-left: 18px; }
+  .timeline-item { padding-left: 28px; }
+  .timeline-dot { left: -18px; }
+  .cta-btns    { flex-direction: column; align-items: center; }
+  .footer-top  { grid-template-columns: 1fr; gap: 32px; }
+  .footer-links-wrap { grid-template-columns: repeat(2, 1fr); }
+  .footer-bottom { flex-direction: column; gap: 8px; text-align: center; padding: 18px 20px; }
+}
+
+@media (max-width: 480px) {
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .footer-links-wrap { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- Preloader -->
+<div class="preloader" id="preloader">
+  <div class="preloader-inner">
+    <div class="preloader-logo">
+      <svg viewBox="0 0 120 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="logo-svg-pre">
+        <path d="M60 5 L100 35 L100 40 L90 40 L90 35 L60 15 L30 35 L30 40 L20 40 L20 35 Z" fill="white"/>
+        <path d="M35 38 L35 85 L50 85 L50 60 L70 60 L70 85 L85 85 L85 38 L60 20 Z" fill="none" stroke="white" stroke-width="3"/>
+        <rect x="52" y="40" width="16" height="16" rx="1" fill="none" stroke="white" stroke-width="2.5"/>
+        <line x1="60" y1="40" x2="60" y2="56" stroke="white" stroke-width="1.5"/>
+        <line x1="52" y1="48" x2="68" y2="48" stroke="white" stroke-width="1.5"/>
+      </svg>
+    </div>
+    <div class="preloader-bar"><div class="preloader-fill" id="preloaderFill"></div></div>
+    <p class="preloader-text">LATAWA REAL ESTATE</p>
+  </div>
+</div>
+
+<!-- Navigation -->
+<nav class="navbar" id="navbar">
+  <div class="nav-container">
+    <a href="index.html" class="nav-logo">
+      <svg viewBox="0 0 80 66" fill="none" xmlns="http://www.w3.org/2000/svg" class="logo-svg">
+        <path d="M40 3 L68 23 L68 27 L60 27 L60 23 L40 10 L20 23 L20 27 L12 27 L12 23 Z" fill="white"/>
+        <path d="M22 25 L22 58 L33 58 L33 40 L47 40 L47 58 L58 58 L58 25 L40 13 Z" fill="none" stroke="white" stroke-width="2.2"/>
+        <rect x="34" y="27" width="12" height="11" rx="0.5" fill="none" stroke="white" stroke-width="1.8"/>
+        <line x1="40" y1="27" x2="40" y2="38" stroke="white" stroke-width="1.2"/>
+        <line x1="34" y1="32.5" x2="46" y2="32.5" stroke="white" stroke-width="1.2"/>
+      </svg>
+      <div class="logo-text">
+        <span class="logo-name">LATAWA</span>
+        <span class="logo-sub">REAL ESTATE</span>
+      </div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="../" class="nav-link">Home</a></li>
+      <li><a href="index.html#properties" class="nav-link">Properties</a></li>
+      <li><a href="index.html" class="nav-link active">About</a></li>
+      <li><a href="index.html#services" class="nav-link">Services</a></li>
+      <li><a href="index.html#showcase" class="nav-link">Projects</a></li>
+      <li><a href="index.html#contact" class="nav-link contact-btn">Contact</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <ul>
+    <li><a href="../" class="mob-link">Home</a></li>
+    <li><a href="index.html#properties" class="mob-link">Properties</a></li>
+    <li><a href="index.html" class="mob-link active">About</a></li>
+    <li><a href="index.html#services" class="mob-link">Services</a></li>
+    <li><a href="index.html#showcase" class="mob-link">Projects</a></li>
+    <li><a href="index.html#contact" class="mob-link">Contact</a></li>
+  </ul>
+</div>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="page-hero-bg">
+    <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1800&q=80&fit=crop" alt="Latawa Real Estate office" />
+    <div class="page-hero-overlay"></div>
+  </div>
+  <div class="page-hero-content">
+    <div class="breadcrumb">
+      <a href="index.html">Home</a>
+      <span class="breadcrumb-sep">/</span>
+      <span>About Us</span>
+    </div>
+    <h1 class="page-hero-title">A decade of <em>trust</em>,<br/>built one home at a time</h1>
+    <p class="page-hero-sub">We're a family-run real estate practice from Firozpur, Punjab — built on the belief that every transaction should leave people better off than we found them.</p>
+  </div>
+</section>
+
+<!-- OUR STORY -->
+<section class="story-section" id="story">
+  <div class="container story-grid">
+    <div class="story-image-wrap reveal-up">
+      <div class="story-img-frame">
+        <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=900&q=80&fit=crop" alt="Latawa Real Estate building a legacy" />
+      </div>
+      <div class="story-float-card">
+        <p class="float-num">2014</p>
+        <p class="float-label">Where It Began</p>
+      </div>
+    </div>
+    <div class="story-content reveal-up">
+      <p class="section-eyebrow">Our Story</p>
+      <h2 class="section-heading">Started with one promise,<br/>kept for <em>ten years</em></h2>
+      <p class="story-para">Latawa Real Estate began in a small office in Firozpur with a simple conviction: that buying or selling property shouldn't feel like a gamble. Too many families in Punjab had been let down by unclear paperwork, inflated promises, and brokers who disappeared after the sale.</p>
+      <p class="story-para">We set out to do it differently — vetting every listing ourselves, walking clients through every clause, and staying reachable long after the keys change hands. A decade later, that same promise is still what every conversation here starts with.</p>
+      <p class="story-para">Today we work across residential, commercial, and investment advisory — but the practice hasn't changed: know the property, know the paperwork, and know the person you're serving.</p>
+    </div>
+  </div>
+</section>
+
+<!-- MISSION / VISION -->
+<section class="mv-section">
+  <div class="container">
+    <div class="mv-grid">
+      <div class="mv-card mission reveal-up">
+        <svg class="mv-icon" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="15" stroke="white" stroke-width="1.4"/><circle cx="20" cy="20" r="8" stroke="white" stroke-width="1.4"/><circle cx="20" cy="20" r="1.6" fill="white"/></svg>
+        <p class="mv-label">Our Mission</p>
+        <h3 class="mv-title">Make every transaction transparent</h3>
+        <p class="mv-text">To give every client — whether buying their first home or expanding a portfolio — complete clarity on what they're investing in, what it's worth, and what to expect at every step, with no fine print left unexplained.</p>
+      </div>
+      <div class="mv-card vision reveal-up">
+        <svg class="mv-icon" viewBox="0 0 40 40" fill="none"><path d="M4 28L14 14L22 22L36 8" stroke="#C9A769" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M28 8H36V16" stroke="#C9A769" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <p class="mv-label">Our Vision</p>
+        <h3 class="mv-title">Punjab's most trusted property name</h3>
+        <p class="mv-text">To be the name families and investors think of first across Punjab — known not for the size of our listings, but for the consistency of doing right by every client, every single time.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOUNDERS -->
+<section class="founders-section" id="founders">
+  <div class="container">
+    <div class="section-header center reveal-up" style="max-width:620px;">
+      <p class="section-eyebrow">Leadership</p>
+      <h2 class="section-heading">The people behind<br/>every <em>handshake</em></h2>
+      <p class="section-desc">Latawa Real Estate is run personally by its founders — not a call center, not a franchise. When you call, you reach the people who built this practice.</p>
+    </div>
+    <div class="founders-grid">
+      <div class="founder-card reveal-up">
+        <div class="founder-img-wrap">
+          <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=700&q=80&fit=crop" alt="Inder Latawa, Founder" />
+          <span class="founder-role-badge">Founder</span>
+        </div>
+        <div class="founder-info">
+          <h3 class="founder-name">Inder Latawa</h3>
+          <p class="founder-title">Founder &amp; Principal Advisor</p>
+          <p class="founder-bio">Inder founded the practice in 2014 and has personally overseen documentation and legal compliance on every sale since — the reason clients describe the process as "zero complications."</p>
+        </div>
+      </div>
+      <div class="founder-card reveal-up">
+        <div class="founder-img-wrap">
+          <img src="https://images.unsplash.com/photo-1556157382-97eda2d62296?w=700&q=80&fit=crop" alt="Vivek Latawa, Co-Founder" />
+          <span class="founder-role-badge">Co-Founder</span>
+        </div>
+        <div class="founder-info">
+          <h3 class="founder-name">Vivek Latawa</h3>
+          <p class="founder-title">Co-Founder &amp; Investment Strategist</p>
+          <p class="founder-bio">Vivek leads investment advisory and commercial acquisitions, identifying growth corridors across Punjab years ahead of the market — the instinct behind several clients' best-performing investments.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MILESTONES TIMELINE (signature section) -->
+<section class="timeline-section" id="milestones">
+  <div class="container">
+    <div class="section-header reveal-up">
+      <p class="section-eyebrow">Milestones</p>
+      <h2 class="section-heading">Ten years,<br/><em>one chapter at a time</em></h2>
+    </div>
+    <div class="timeline">
+      <div class="timeline-item reveal-up">
+        <span class="timeline-dot"></span>
+        <p class="timeline-year">2014</p>
+        <h3 class="timeline-title">Latawa Real Estate is founded</h3>
+        <p class="timeline-text">Inder Latawa opens a single office in Firozpur, focused on residential resale and rental in the local market.</p>
+      </div>
+      <div class="timeline-item reveal-up">
+        <span class="timeline-dot"></span>
+        <p class="timeline-year">2017</p>
+        <h3 class="timeline-title">Vivek joins, advisory practice begins</h3>
+        <p class="timeline-text">Vivek Latawa comes on board to lead a new investment advisory arm, helping early clients enter commercial property.</p>
+      </div>
+      <div class="timeline-item reveal-up">
+        <span class="timeline-dot"></span>
+        <p class="timeline-year">2019</p>
+        <h3 class="timeline-title">Crosses 100 successful transactions</h3>
+        <p class="timeline-text">A milestone built almost entirely on referrals — word of mouth becomes the practice's primary source of new clients.</p>
+      </div>
+      <div class="timeline-item reveal-up">
+        <span class="timeline-dot"></span>
+        <p class="timeline-year">2021</p>
+        <h3 class="timeline-title">Expansion across Punjab</h3>
+        <p class="timeline-text">Operations grow beyond Firozpur into Chandigarh, Mohali, Ludhiana, and Amritsar, following client demand.</p>
+      </div>
+      <div class="timeline-item reveal-up">
+        <span class="timeline-dot"></span>
+        <p class="timeline-year">2024</p>
+        <h3 class="timeline-title">500+ properties, 100+ trusted clients</h3>
+        <p class="timeline-text">A decade in, the practice has delivered 50+ projects and continues to operate with the same founder-led attention it started with.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CORE VALUES -->
+<section class="values-section" id="values">
+  <div class="container">
+    <div class="section-header center reveal-up" style="max-width:560px;">
+      <p class="section-eyebrow">What We Stand For</p>
+      <h2 class="section-heading">Principles that don't<br/>change with the <em>market</em></h2>
+    </div>
+    <div class="values-grid">
+      <div class="value-card reveal-up">
+        <svg class="value-icon" viewBox="0 0 40 40" fill="none" stroke="currentColor"><path d="M20 4L36 12V20C36 28 28.8 35.2 20 38C11.2 35.2 4 28 4 20V12L20 4Z" stroke-width="1.5" stroke-linejoin="round"/><path d="M13 20L18 25L28 15" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <h3 class="value-title">Integrity First</h3>
+        <p class="value-desc">We disclose everything — defects, disputes, true market value — even when silence would close the deal faster.</p>
+      </div>
+      <div class="value-card reveal-up">
+        <svg class="value-icon" viewBox="0 0 40 40" fill="none" stroke="currentColor"><rect x="8" y="6" width="24" height="28" rx="2" stroke-width="1.5"/><path d="M14 14H26M14 19H26M14 24H20" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <h3 class="value-title">Total Transparency</h3>
+        <p class="value-desc">Every fee, every clause, every timeline is explained upfront — no fine print, no surprises after signing.</p>
+      </div>
+      <div class="value-card reveal-up">
+        <svg class="value-icon" viewBox="0 0 40 40" fill="none" stroke="currentColor"><circle cx="20" cy="14" r="6" stroke-width="1.5"/><path d="M8 34C8 27.4 13.4 22 20 22C26.6 22 32 27.4 32 34" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <h3 class="value-title">Personal Attention</h3>
+        <p class="value-desc">No call centers, no hand-offs. The founders you meet at the first call are who you work with at closing.</p>
+      </div>
+      <div class="value-card reveal-up">
+        <svg class="value-icon" viewBox="0 0 40 40" fill="none" stroke="currentColor"><path d="M10 30L10 20L20 8L30 20V30" stroke-width="1.5" stroke-linejoin="round"/><polyline points="10,30 30,30" stroke-width="1.5" stroke-linecap="round"/><path d="M15 30V22H25V30" stroke-width="1.5"/></svg>
+        <h3 class="value-title">Long-Term Growth</h3>
+        <p class="value-desc">We advise for the next decade, not the next commission — steering clients toward value that compounds.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="stats-section">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-card reveal-up"><p class="stat-num">500<span>+</span></p><p class="stat-label">Properties</p></div>
+      <div class="stat-card reveal-up"><p class="stat-num">100<span>+</span></p><p class="stat-label">Happy Clients</p></div>
+      <div class="stat-card reveal-up"><p class="stat-num">10<span>+</span></p><p class="stat-label">Years Experience</p></div>
+      <div class="stat-card reveal-up"><p class="stat-num">50<span>+</span></p><p class="stat-label">Projects Delivered</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY CHOOSE US -->
+<section class="why-section" id="why">
+  <div class="container">
+    <div class="section-header center reveal-up" style="max-width:560px;">
+      <p class="section-eyebrow">Why Clients Stay With Us</p>
+      <h2 class="section-heading">What ten years taught us<br/>about doing this <em>right</em></h2>
+    </div>
+    <div class="why-list">
+      <div class="why-row reveal-up">
+        <span class="why-num">01</span>
+        <h3 class="why-title">We vet before we list</h3>
+        <p class="why-desc">Every property is checked for legal clarity and title history before it ever reaches a client — not after an offer is made.</p>
+      </div>
+      <div class="why-row reveal-up">
+        <span class="why-num">02</span>
+        <h3 class="why-title">We stay after the sale</h3>
+        <p class="why-desc">Our involvement doesn't end at the handover — clients can call us years later for management, resale, or advice.</p>
+      </div>
+      <div class="why-row reveal-up">
+        <span class="why-num">03</span>
+        <h3 class="why-title">We say no when we should</h3>
+        <p class="why-desc">If a property isn't right for a client's goals or budget, we tell them — even if it means losing the commission.</p>
+      </div>
+      <div class="why-row reveal-up">
+        <span class="why-num">04</span>
+        <h3 class="why-title">We know Punjab, block by block</h3>
+        <p class="why-desc">A decade of local transactions means we know which streets are appreciating and which paperwork actually matters.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="cta-mesh"></div>
+  <div class="container cta-inner reveal-up">
+    <p class="section-eyebrow" style="justify-content:center;">Let's Talk</p>
+    <h2 class="cta-heading">Ready to start your<br/><em>property journey?</em></h2>
+    <p class="cta-sub">Whether you're buying your first home or growing a portfolio, the founders are one call away.</p>
+    <div class="cta-btns">
+      <a href="index.html#contact" class="btn-primary">Get In Touch</a>
+      <a href="tel:+919988500421" class="btn-ghost">Call Us Now</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer" id="footer">
+  <div class="footer-top container">
+    <div class="footer-brand">
+      <a href="index.html" class="nav-logo footer-logo">
+        <svg viewBox="0 0 80 66" fill="none" xmlns="http://www.w3.org/2000/svg" class="logo-svg">
+          <path d="M40 3 L68 23 L68 27 L60 27 L60 23 L40 10 L20 23 L20 27 L12 27 L12 23 Z" fill="white"/>
+          <path d="M22 25 L22 58 L33 58 L33 40 L47 40 L47 58 L58 58 L58 25 L40 13 Z" fill="none" stroke="white" stroke-width="2.2"/>
+          <rect x="34" y="27" width="12" height="11" rx="0.5" fill="none" stroke="white" stroke-width="1.8"/>
+          <line x1="40" y1="27" x2="40" y2="38" stroke="white" stroke-width="1.2"/>
+          <line x1="34" y1="32.5" x2="46" y2="32.5" stroke="white" stroke-width="1.2"/>
+        </svg>
+        <div class="logo-text">
+          <span class="logo-name">LATAWA</span>
+          <span class="logo-sub">REAL ESTATE</span>
+        </div>
+      </a>
+      <p class="footer-tagline">Trust · Value · Growth</p>
+      <p class="footer-about">Crafting premium property experiences across Punjab with integrity, expertise, and a passion for growth.</p>
+    </div>
+    <div class="footer-links-wrap">
+      <div class="footer-col">
+        <h4 class="footer-col-title">Navigate</h4>
+        <ul>
+          <li><a href="../">Home</a></li>
+          <li><a href="index.html#properties">Properties</a></li>
+          <li><a href="index.html">About</a></li>
+          <li><a href="index.html#services">Services</a></li>
+          <li><a href="index.html#showcase">Projects</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4 class="footer-col-title">Contact</h4>
+        <ul>
+          <li><a href="tel:+919988500421">+91 98885 00421</a></li>
+          <li><a href="tel:+919814978768">+91 98149 78768</a></li>
+          <li><a href="mailto:info@latawarealestate.com">info@latawarealestate.com</a></li>
+          <li>VPO Firozpur, Punjab</li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4 class="footer-col-title">Services</h4>
+        <ul>
+          <li>Residential Sales</li>
+          <li>Commercial Spaces</li>
+          <li>Legal Assistance</li>
+          <li>Investment Advisory</li>
+          <li>Property Management</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom container">
+    <p>© 2024 Latawa Real Estate. All rights reserved.</p>
+    <p class="footer-credit">Trust · Value · Growth</p>
+  </div>
+</footer>
+
+<script>
+/* =============================================
+   About Us page — preloader, navbar, mobile menu,
+   and scroll reveals (mirrors homepage behavior)
+   ============================================= */
+gsap.registerPlugin(ScrollTrigger);
+
+const PREFERS_REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---- Preloader ---- */
+function initPreloader() {
+  return new Promise((resolve) => {
+    const preloader = document.getElementById('preloader');
+    const fill = document.getElementById('preloaderFill');
+    let progress = 0;
+    const step = () => {
+      progress += Math.random() * 20 + 8;
+      if (progress >= 100) {
+        progress = 100;
+        fill.style.width = '100%';
+        gsap.to(preloader, {
+          opacity: 0, duration: 0.6, delay: 0.2,
+          onComplete: () => { preloader.style.display = 'none'; resolve(); }
+        });
+        return;
+      }
+      fill.style.width = progress + '%';
+      setTimeout(step, 120);
+    };
+    step();
+  });
+}
+
+/* ---- Navbar scroll state ---- */
+function initNavbar() {
+  const navbar = document.getElementById('navbar');
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      requestAnimationFrame(() => {
+        navbar.classList.toggle('scrolled', window.scrollY > 60);
+        ticking = false;
+      });
+      ticking = true;
+    }
+  }, { passive: true });
+}
+
+/* ---- Mobile menu ---- */
+function closeMobileMenu() {
+  const menu = document.getElementById('mobileMenu');
+  const hamburger = document.getElementById('hamburger');
+  if (!menu) return;
+  menu.classList.remove('open');
+  hamburger.classList.remove('active');
+  document.body.style.overflow = '';
+  setTimeout(() => { menu.style.display = 'none'; }, 400);
+}
+
+function initMobileMenu() {
+  const hamburger = document.getElementById('hamburger');
+  const menu = document.getElementById('mobileMenu');
+  if (!hamburger || !menu) return;
+
+  hamburger.addEventListener('click', () => {
+    const isOpen = menu.classList.contains('open');
+    if (isOpen) {
+      closeMobileMenu();
+    } else {
+      menu.style.display = 'flex';
+      requestAnimationFrame(() => menu.classList.add('open'));
+      hamburger.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+    const spans = hamburger.querySelectorAll('span');
+    if (!menu.classList.contains('open')) {
+      gsap.to(spans[0], { rotate: 45, y: 6.5, duration: 0.3 });
+      gsap.to(spans[1], { opacity: 0, duration: 0.2 });
+      gsap.to(spans[2], { rotate: -45, y: -6.5, duration: 0.3 });
+    } else {
+      gsap.to(spans[0], { rotate: 0, y: 0, duration: 0.3 });
+      gsap.to(spans[1], { opacity: 1, duration: 0.2 });
+      gsap.to(spans[2], { rotate: 0, y: 0, duration: 0.3 });
+    }
+  });
+
+  // Close mobile menu after tapping a same-page anchor (none here, but safe for hash links)
+  menu.querySelectorAll('a[href*="#"]').forEach((link) => {
+    link.addEventListener('click', () => closeMobileMenu());
+  });
+}
+
+/* ---- Scroll reveals ---- */
+function initScrollReveals() {
+  if (PREFERS_REDUCED) {
+    document.querySelectorAll('.reveal-up').forEach(el => {
+      el.style.opacity = '1';
+      el.style.transform = 'none';
+    });
+    return;
+  }
+
+  document.querySelectorAll('.reveal-up').forEach((el) => {
+    gsap.fromTo(el,
+      { opacity: 0, y: 28 },
+      {
+        opacity: 1, y: 0, duration: 0.75, ease: 'power3.out',
+        scrollTrigger: { trigger: el, start: 'top 90%', toggleActions: 'play none none none' }
+      }
+    );
+  });
+
+  // Stagger the timeline items slightly faster for a sense of sequence
+  gsap.utils.toArray('.timeline-item').forEach((item, i) => {
+    gsap.fromTo(item,
+      { opacity: 0, x: -16 },
+      {
+        opacity: 1, x: 0, duration: 0.6, ease: 'power3.out', delay: i * 0.04,
+        scrollTrigger: { trigger: item, start: 'top 92%', toggleActions: 'play none none none' }
+      }
+    );
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  initPreloader().then(() => {
+    // nothing extra needed post-preload on this page
+  });
+  initNavbar();
+  initMobileMenu();
+  initScrollReveals();
+
+  window.addEventListener('load', () => ScrollTrigger.refresh(), { passive: true });
+});
+</script>
+</body>
+</html>
