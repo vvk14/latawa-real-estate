@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Contact Us — LATAWA REAL ESTATE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+<style>
+/* =============================================
+   LATAWA REAL ESTATE — Contact Us page
+   Self-contained: HTML + CSS + JS in one file
+   Matches main site token system (Fraunces + Inter,
+   dark glass aesthetic, compact type scale)
+   Unique layout: interactive contact-method switcher
+   + FAQ accordion, instead of a plain form-only page
+   ============================================= */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --black:      #000000;
+  --dark:       #080808;
+  --dark2:      #0e0e0e;
+  --dark3:      #161616;
+  --dark4:      #1e1e1e;
+  --silver:     #C8C8C8;
+  --silver2:    #A0A0A0;
+  --offwhite:   #F0F0F0;
+  --white:      #ffffff;
+  --accent:     #C9A769;
+
+  --glass-bg:      rgba(255,255,255,0.055);
+  --glass-border:  rgba(255,255,255,0.11);
+  --glass-hover:   rgba(255,255,255,0.09);
+
+  --container: 1400px;
+  --radius:    16px;
+  --radius-sm: 10px;
+  --transition: 0.38s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+  --font-display: 'Fraunces', serif;
+  --font-body: 'Inter', sans-serif;
+
+  --fs-h1:      clamp(32px, 3.6vw, 48px);
+  --fs-h2:      clamp(26px, 2.6vw, 36px);
+  --fs-h3:      17px;
+  --fs-body-lg: 14px;
+  --fs-body:    13px;
+  --fs-body-sm: 12px;
+  --fs-eyebrow: 10px;
+  --fs-micro:   9px;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--dark);
+  color: var(--offwhite);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+a { color: inherit; text-decoration: none; }
+ul { list-style: none; }
+img { display: block; width: 100%; height: 100%; object-fit: cover; }
+button { border: none; background: none; font-family: var(--font-body); }
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--black); }
+::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 2px; }
+::selection { background: rgba(255,255,255,0.18); color: white; }
+
+.container { max-width: var(--container); margin: 0 auto; padding: 0 40px; }
+
+:focus-visible {
+  outline: 1px solid rgba(201,167,105,0.8);
+  outline-offset: 3px;
+}
+
+/* =============================================
+   PRELOADER
+   ============================================= */
+.preloader {
+  position: fixed; inset: 0;
+  background: var(--black);
+  z-index: 9999;
+  display: flex; align-items: center; justify-content: center;
+}
+.preloader-inner { text-align: center; }
+.logo-svg-pre {
+  width: 60px; margin: 0 auto 24px;
+  opacity: 0; animation: fadeUp 0.8s 0.3s forwards;
+}
+.preloader-bar {
+  width: 160px; height: 1px;
+  background: rgba(255,255,255,0.08);
+  margin: 0 auto 16px; overflow: hidden;
+  border-radius: 1px;
+}
+.preloader-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--silver2), var(--silver));
+  width: 0%;
+  transition: width 0.08s linear;
+}
+.preloader-text {
+  font-size: var(--fs-micro); letter-spacing: 4px;
+  color: rgba(255,255,255,0.3); font-weight: 500;
+}
+@keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeIn { to { opacity: 1; } }
+
+/* =============================================
+   NAVBAR
+   ============================================= */
+.navbar {
+  position: fixed;
+  top: 18px; left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  width: calc(100% - 48px);
+  max-width: 1340px;
+  border-radius: 100px;
+  padding: 11px 22px;
+  background: rgba(8,8,8,0.55);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255,255,255,0.09);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  transition: var(--transition);
+}
+.navbar.scrolled {
+  background: rgba(6,6,6,0.85);
+  border-color: rgba(255,255,255,0.13);
+  top: 10px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+}
+.nav-container { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.nav-logo { display: flex; align-items: center; gap: 9px; }
+.logo-svg { width: 30px; flex-shrink: 0; }
+.logo-text { display: flex; flex-direction: column; line-height: 1; }
+.logo-name {
+  font-family: var(--font-display);
+  font-size: 13px; font-weight: 600;
+  letter-spacing: 2px; color: white;
+}
+.logo-sub {
+  font-size: 6.5px; letter-spacing: 2px;
+  color: rgba(255,255,255,0.45); font-weight: 400; margin-top: 2px;
+}
+.nav-links { display: flex; align-items: center; gap: 2px; }
+.nav-link {
+  font-size: 12.5px; letter-spacing: 0.2px;
+  color: rgba(255,255,255,0.65);
+  padding: 8px 13px;
+  border-radius: 100px;
+  transition: color 0.25s, background 0.25s;
+  font-weight: 500; position: relative;
+}
+.nav-link::after {
+  content: ''; position: absolute;
+  bottom: 5px; left: 50%; transform: translateX(-50%);
+  width: 0; height: 1px; background: rgba(255,255,255,0.6);
+  transition: width 0.3s ease;
+}
+.nav-link:hover { color: white; }
+.nav-link:hover::after { width: 55%; }
+.nav-link.active { color: white; }
+.nav-link.active::after { width: 55%; background: var(--accent); }
+.nav-link.contact-btn {
+  background: rgba(255,255,255,0.09);
+  color: white; border: 1px solid rgba(255,255,255,0.14);
+}
+.nav-link.contact-btn:hover { background: rgba(255,255,255,0.16); }
+.nav-link.contact-btn::after { display: none; }
+.hamburger { display: none; flex-direction: column; gap: 5px; padding: 4px; cursor: pointer; }
+.hamburger span { display: block; width: 20px; height: 1.5px; background: white; transition: var(--transition); }
+
+.mobile-menu {
+  display: none; position: fixed; inset: 0;
+  background: rgba(4,4,4,0.97);
+  backdrop-filter: blur(28px);
+  z-index: 999;
+  align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 0.35s;
+}
+.mobile-menu.open { opacity: 1; }
+.mobile-menu ul { text-align: center; }
+.mobile-menu li { padding: 12px 0; }
+.mob-link {
+  font-family: var(--font-display);
+  font-size: 26px; font-weight: 500;
+  color: rgba(255,255,255,0.75);
+  transition: color 0.3s;
+}
+.mob-link:hover, .mob-link.active { color: white; }
+
+/* =============================================
+   GLASS CARD / BUTTONS
+   ============================================= */
+.glass-card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  border-radius: var(--radius);
+  transition: var(--transition);
+}
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: white; color: black;
+  padding: 13px 28px; border-radius: 100px;
+  font-size: 12.5px; font-weight: 600; letter-spacing: 0.3px;
+  transition: var(--transition); cursor: pointer;
+}
+.btn-primary:hover { background: var(--silver); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255,255,255,0.12); }
+.btn-ghost {
+  display: inline-flex; align-items: center; gap: 8px;
+  border: 1px solid rgba(255,255,255,0.28);
+  color: white; padding: 13px 28px; border-radius: 100px;
+  font-size: 12.5px; font-weight: 600; letter-spacing: 0.3px;
+  transition: var(--transition); cursor: pointer;
+}
+.btn-ghost:hover { border-color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.06); transform: translateY(-2px); }
+.full-width { width: 100%; justify-content: center; }
+
+/* =============================================
+   SECTION COMMONS
+   ============================================= */
+.section-eyebrow {
+  font-size: var(--fs-eyebrow); letter-spacing: 3.5px; text-transform: uppercase;
+  color: rgba(255,255,255,0.38); margin-bottom: 12px; font-weight: 500;
+  display: inline-flex; align-items: center; gap: 10px;
+}
+.section-eyebrow::before {
+  content: ''; width: 14px; height: 1px; background: var(--accent);
+  display: inline-block;
+}
+.section-heading {
+  font-family: var(--font-display);
+  font-size: var(--fs-h2);
+  font-weight: 500; line-height: 1.18;
+  color: var(--offwhite); margin-bottom: 18px;
+  letter-spacing: -0.2px;
+}
+.section-heading em { font-style: italic; color: rgba(255,255,255,0.42); }
+.section-desc {
+  font-size: var(--fs-body);
+  color: rgba(255,255,255,0.42);
+  max-width: 460px; line-height: 1.7;
+}
+.section-header { margin-bottom: 48px; }
+.section-header.center { text-align: center; margin-left: auto; margin-right: auto; }
+.section-header.center .section-desc { margin-left: auto; margin-right: auto; }
+.section-header.center .section-eyebrow { justify-content: center; }
+
+/* =============================================
+   PAGE HERO
+   ============================================= */
+.page-hero {
+  position: relative;
+  min-height: 56vh;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+  padding-top: 100px;
+}
+.page-hero-bg { position: absolute; inset: 0; z-index: 0; }
+.page-hero-bg img { filter: grayscale(25%) brightness(0.26); }
+.page-hero-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.5) 55%, rgba(8,8,8,0.95) 100%);
+}
+.page-hero-content {
+  position: relative; z-index: 2;
+  text-align: center; max-width: 700px; padding: 0 24px;
+}
+.breadcrumb {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  font-size: var(--fs-eyebrow); letter-spacing: 2px; text-transform: uppercase;
+  color: rgba(255,255,255,0.4); margin-bottom: 24px;
+}
+.breadcrumb a { color: rgba(255,255,255,0.6); transition: color 0.25s; }
+.breadcrumb a:hover { color: white; }
+.breadcrumb-sep { color: rgba(255,255,255,0.2); }
+.page-hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(34px, 4.6vw, 54px);
+  font-weight: 500; line-height: 1.14; color: white;
+  margin-bottom: 18px; letter-spacing: -0.4px;
+  overflow: hidden;
+}
+.page-hero-title em { font-style: italic; color: rgba(255,255,255,0.5); }
+.hero-title-line {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(60%);
+  will-change: transform, opacity;
+}
+.page-hero-sub {
+  font-size: var(--fs-body-lg); color: rgba(255,255,255,0.5);
+  line-height: 1.75; max-width: 520px; margin: 0 auto;
+  opacity: 0; transform: translateY(14px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-title-line, .page-hero-sub { opacity: 1 !important; transform: none !important; }
+}
+
+/* =============================================
+   CONTACT METHOD SWITCHER — signature section
+   Tabs on the left select a method; the right panel
+   swaps content with a short cross-fade so each
+   method gets a real dedicated answer instead of a
+   cramped icon row.
+   ============================================= */
+.switcher-section { padding: 90px 0 100px; background: var(--dark); }
+.switcher-grid {
+  display: grid; grid-template-columns: 280px 1fr;
+  gap: 0;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: rgba(255,255,255,0.02);
+}
+.switcher-tabs {
+  display: flex; flex-direction: column;
+  border-right: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.015);
+}
+.switcher-tab {
+  display: flex; align-items: center; gap: 14px;
+  padding: 22px 24px;
+  text-align: left; cursor: pointer;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.45);
+  transition: var(--transition);
+  position: relative;
+}
+.switcher-tab:last-child { border-bottom: none; }
+.switcher-tab-icon {
+  width: 30px; height: 30px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.14);
+  transition: var(--transition);
+}
+.switcher-tab-icon svg { width: 14px; height: 14px; }
+.switcher-tab-label { font-size: var(--fs-body); font-weight: 600; color: inherit; }
+.switcher-tab-sub { font-size: 10.5px; color: rgba(255,255,255,0.3); margin-top: 2px; }
+.switcher-tab:hover { background: rgba(255,255,255,0.03); color: rgba(255,255,255,0.75); }
+.switcher-tab.active {
+  background: rgba(255,255,255,0.05);
+  color: white;
+}
+.switcher-tab.active .switcher-tab-icon {
+  border-color: var(--accent); background: rgba(201,167,105,0.12);
+}
+.switcher-tab.active::before {
+  content: ''; position: absolute; left: 0; top: 12px; bottom: 12px; width: 2px;
+  background: var(--accent); border-radius: 2px;
+}
+
+.switcher-panels { position: relative; padding: 44px 48px; min-height: 360px; }
+.switcher-panel {
+  display: none;
+  animation: panelIn 0.45s ease forwards;
+}
+.switcher-panel.active { display: block; }
+@keyframes panelIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+.panel-label {
+  font-size: var(--fs-eyebrow); letter-spacing: 2px; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 10px; font-weight: 600;
+}
+.panel-title {
+  font-family: var(--font-display);
+  font-size: 24px; font-weight: 500; color: white; margin-bottom: 14px;
+}
+.panel-text {
+  font-size: var(--fs-body); color: rgba(255,255,255,0.48);
+  line-height: 1.8; max-width: 460px; margin-bottom: 26px;
+}
+.panel-contacts { display: flex; flex-direction: column; gap: 14px; margin-bottom: 26px; }
+.panel-contact-row {
+  display: flex; align-items: center; gap: 14px;
+}
+.panel-contact-row .who {
+  font-size: 11px; color: rgba(255,255,255,0.32); min-width: 110px;
+}
+.panel-contact-row a {
+  font-size: 16px; font-weight: 600; color: white;
+  font-family: var(--font-display);
+  transition: color 0.25s;
+}
+.panel-contact-row a:hover { color: var(--accent); }
+.panel-note {
+  font-size: 11px; color: rgba(255,255,255,0.3);
+  border-top: 1px solid rgba(255,255,255,0.07);
+  padding-top: 18px;
+}
+
+/* Office hours mini-grid inside Visit panel */
+.hours-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 28px; margin-bottom: 26px; max-width: 360px; }
+.hours-row { display: flex; justify-content: space-between; font-size: 12px; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.hours-row span:first-child { color: rgba(255,255,255,0.45); }
+.hours-row span:last-child { color: rgba(255,255,255,0.7); font-weight: 500; }
+
+/* =============================================
+   FORM + MAP SPLIT
+   ============================================= */
+.form-map-section { padding: 0 0 100px; background: var(--dark); }
+.form-map-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 24px; align-items: stretch;
+}
+.contact-form-wrap {
+  padding: 40px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  backdrop-filter: blur(20px);
+  border-radius: var(--radius);
+}
+.form-title {
+  font-family: var(--font-display);
+  font-size: 21px; font-weight: 500; color: white; margin-bottom: 8px;
+}
+.form-sub { font-size: var(--fs-body-sm); color: rgba(255,255,255,0.4); margin-bottom: 26px; }
+.form-group { margin-bottom: 12px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.form-input {
+  width: 100%;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: var(--radius-sm);
+  padding: 13px 15px; color: white;
+  font-size: var(--fs-body); font-family: var(--font-body);
+  outline: none; resize: none;
+  transition: border-color 0.3s, background 0.3s;
+}
+.form-input::placeholder { color: rgba(255,255,255,0.22); }
+.form-input:focus { border-color: rgba(255,255,255,0.24); background: rgba(255,255,255,0.065); }
+.form-select { appearance: none; cursor: pointer; }
+.form-select option { background: #181818; color: white; }
+
+.map-wrap {
+  position: relative; border-radius: var(--radius); overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.09);
+  min-height: 100%;
+}
+.map-wrap iframe { width: 100%; height: 100%; min-height: 420px; border: 0; filter: grayscale(40%) invert(92%) contrast(90%); }
+.map-pin-card {
+  position: absolute; bottom: 18px; left: 18px; right: 18px;
+  padding: 16px 20px;
+  background: rgba(10,10,10,0.85);
+  border: 1px solid rgba(255,255,255,0.14);
+  backdrop-filter: blur(16px);
+  border-radius: var(--radius-sm);
+  display: flex; align-items: center; gap: 14px;
+}
+.map-pin-icon {
+  width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
+  background: rgba(201,167,105,0.15); border: 1px solid rgba(201,167,105,0.4);
+  display: flex; align-items: center; justify-content: center;
+}
+.map-pin-text p:first-child { font-size: 12.5px; font-weight: 600; color: white; }
+.map-pin-text p:last-child { font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 2px; }
+
+/* =============================================
+   RESPONSE TRUST STRIP
+   ============================================= */
+.trust-strip { padding: 0 0 100px; background: var(--dark); }
+.trust-strip-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+}
+.trust-strip-card {
+  padding: 26px 28px; border-radius: var(--radius);
+  background: var(--glass-bg);
+  border: 1px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(16px);
+  display: flex; align-items: flex-start; gap: 16px;
+}
+.trust-strip-icon {
+  width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+  background: rgba(201,167,105,0.1); border: 1px solid rgba(201,167,105,0.3);
+  display: flex; align-items: center; justify-content: center;
+}
+.trust-strip-icon svg { width: 16px; height: 16px; }
+.trust-strip-title { font-size: 14px; font-weight: 600; color: white; margin-bottom: 4px; }
+.trust-strip-text { font-size: 12px; color: rgba(255,255,255,0.42); line-height: 1.6; }
+
+/* =============================================
+   FAQ ACCORDION
+   ============================================= */
+.faq-section { padding: 0 0 100px; background: var(--dark); }
+.faq-list { max-width: 760px; margin: 0 auto; }
+.faq-item {
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.faq-item:first-child { border-top: 1px solid rgba(255,255,255,0.08); }
+.faq-question {
+  width: 100%; display: flex; align-items: center; justify-content: space-between;
+  padding: 22px 4px; cursor: pointer; text-align: left;
+  font-size: var(--fs-body-lg); font-weight: 600; color: white;
+}
+.faq-icon {
+  width: 22px; height: 22px; flex-shrink: 0; position: relative;
+  border: 1px solid rgba(255,255,255,0.2); border-radius: 50%;
+  transition: var(--transition);
+}
+.faq-icon::before, .faq-icon::after {
+  content: ''; position: absolute; background: rgba(255,255,255,0.7);
+  top: 50%; left: 50%; transform: translate(-50%, -50%);
+  transition: transform 0.3s ease;
+}
+.faq-icon::before { width: 9px; height: 1.2px; }
+.faq-icon::after { width: 1.2px; height: 9px; }
+.faq-item.open .faq-icon { border-color: var(--accent); }
+.faq-item.open .faq-icon::after { transform: translate(-50%, -50%) rotate(90deg) scaleY(0); }
+.faq-answer {
+  max-height: 0; overflow: hidden;
+  transition: max-height 0.4s ease;
+}
+.faq-answer-inner {
+  padding: 0 4px 22px;
+  font-size: var(--fs-body); color: rgba(255,255,255,0.46); line-height: 1.75;
+  max-width: 620px;
+}
+
+/* =============================================
+   FOOTER
+   ============================================= */
+.footer { background: var(--black); border-top: 1px solid rgba(255,255,255,0.06); }
+.footer-top { display: grid; grid-template-columns: 1fr 2fr; gap: 64px; padding-top: 60px; padding-bottom: 44px; }
+.footer-logo { margin-bottom: 12px; display: inline-flex; }
+.footer-tagline { font-size: var(--fs-micro); letter-spacing: 2.5px; color: rgba(255,255,255,0.22); text-transform: uppercase; margin-bottom: 12px; margin-top: 2px; }
+.footer-about { font-size: var(--fs-body-sm); color: rgba(255,255,255,0.32); line-height: 1.7; max-width: 280px; }
+.footer-links-wrap { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+.footer-col-title { font-size: 9.5px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.38); margin-bottom: 16px; font-weight: 600; }
+.footer-col ul { display: flex; flex-direction: column; gap: 8px; }
+.footer-col ul li, .footer-col ul a { font-size: var(--fs-body-sm); color: rgba(255,255,255,0.28); transition: color 0.3s; }
+.footer-col ul a:hover { color: rgba(255,255,255,0.65); }
+.footer-bottom { border-top: 1px solid rgba(255,255,255,0.05); padding: 20px 40px; display: flex; align-items: center; justify-content: space-between; }
+.footer-bottom p, .footer-credit { font-size: 10.5px; color: rgba(255,255,255,0.18); letter-spacing: 0.4px; }
+
+/* =============================================
+   ANIMATION HELPERS
+   ============================================= */
+.reveal-up { opacity: 0; transform: translateY(28px); }
+@media (prefers-reduced-motion: reduce) {
+  .reveal-up { opacity: 1 !important; transform: none !important; }
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+/* =============================================
+   RESPONSIVE
+   ============================================= */
+@media (max-width: 1100px) {
+  .switcher-grid { grid-template-columns: 1fr; }
+  .switcher-tabs { flex-direction: row; overflow-x: auto; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .switcher-tab { border-bottom: none; border-right: 1px solid rgba(255,255,255,0.06); flex-shrink: 0; min-width: 220px; }
+  .switcher-tab.active::before { left: 0; top: auto; bottom: 0; width: 100%; height: 2px; }
+  .switcher-panels { padding: 32px; }
+  .form-map-grid { grid-template-columns: 1fr; }
+  .map-wrap iframe { min-height: 320px; }
+  .trust-strip-grid { grid-template-columns: 1fr; }
+  .footer-top { gap: 40px; }
+}
+
+@media (max-width: 768px) {
+  .container { padding: 0 20px; }
+  .navbar { width: calc(100% - 26px); top: 12px; padding: 11px 16px; }
+  .nav-links { display: none; }
+  .hamburger { display: flex; }
+  .page-hero { padding-top: 84px; min-height: 50vh; }
+  .form-row { grid-template-columns: 1fr; }
+  .switcher-panels { padding: 24px 20px; }
+  .hours-grid { grid-template-columns: 1fr; }
+  .footer-top { grid-template-columns: 1fr; gap: 32px; }
+  .footer-links-wrap { grid-template-columns: repeat(2, 1fr); }
+  .footer-bottom { flex-direction: column; gap: 8px; text-align: center; padding: 18px 20px; }
+}
+
+@media (max-width: 480px) {
+  .footer-links-wrap { grid-template-columns: 1fr; }
+  .switcher-tab { min-width: 170px; padding: 16px 18px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Preloader -->
+<div class="preloader" id="preloader">
+  <div class="preloader-inner">
+    <div class="preloader-logo">
+      <svg viewBox="0 0 120 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="logo-svg-pre">
+        <path d="M60 5 L100 35 L100 40 L90 40 L90 35 L60 15 L30 35 L30 40 L20 40 L20 35 Z" fill="white"/>
+        <path d="M35 38 L35 85 L50 85 L50 60 L70 60 L70 85 L85 85 L85 38 L60 20 Z" fill="none" stroke="white" stroke-width="3"/>
+        <rect x="52" y="40" width="16" height="16" rx="1" fill="none" stroke="white" stroke-width="2.5"/>
+        <line x1="60" y1="40" x2="60" y2="56" stroke="white" stroke-width="1.5"/>
+        <line x1="52" y1="48" x2="68" y2="48" stroke="white" stroke-width="1.5"/>
+      </svg>
+    </div>
+    <div class="preloader-bar"><div class="preloader-fill" id="preloaderFill"></div></div>
+    <p class="preloader-text">LATAWA REAL ESTATE</p>
+  </div>
+</div>
+
+<!-- Navigation -->
+<nav class="navbar" id="navbar">
+  <div class="nav-container">
+    <a href="/" class="nav-logo">
+      <svg viewBox="0 0 80 66" fill="none" xmlns="http://www.w3.org/2000/svg" class="logo-svg">
+        <path d="M40 3 L68 23 L68 27 L60 27 L60 23 L40 10 L20 23 L20 27 L12 27 L12 23 Z" fill="white"/>
+        <path d="M22 25 L22 58 L33 58 L33 40 L47 40 L47 58 L58 58 L58 25 L40 13 Z" fill="none" stroke="white" stroke-width="2.2"/>
+        <rect x="34" y="27" width="12" height="11" rx="0.5" fill="none" stroke="white" stroke-width="1.8"/>
+        <line x1="40" y1="27" x2="40" y2="38" stroke="white" stroke-width="1.2"/>
+        <line x1="34" y1="32.5" x2="46" y2="32.5" stroke="white" stroke-width="1.2"/>
+      </svg>
+      <div class="logo-text">
+        <span class="logo-name">LATAWA</span>
+        <span class="logo-sub">REAL ESTATE</span>
+      </div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="/" class="nav-link">Home</a></li>
+      <li><a href="/properties/" class="nav-link">Properties</a></li>
+      <li><a href="/about-us/" class="nav-link">About</a></li>
+      <li><a href="/services/" class="nav-link">Services</a></li>
+      <li><a href="/projects/" class="nav-link">Projects</a></li>
+      <li><a href="/contact-us/" class="nav-link contact-btn active">Contact</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <ul>
+    <li><a href="/" class="mob-link">Home</a></li>
+    <li><a href="/properties/" class="mob-link">Properties</a></li>
+    <li><a href="/about-us/" class="mob-link">About</a></li>
+    <li><a href="/services/" class="mob-link">Services</a></li>
+    <li><a href="/projects/" class="mob-link">Projects</a></li>
+    <li><a href="/contact-us/" class="mob-link active">Contact</a></li>
+  </ul>
+</div>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="page-hero-bg">
+    <img src="https://images.unsplash.com/photo-1556157382-97eda2d62296?w=1800&q=80&fit=crop" alt="Contact Latawa Real Estate" />
+    <div class="page-hero-overlay"></div>
+  </div>
+  <div class="page-hero-content">
+    <div class="breadcrumb">
+      <a href="index.html">Home</a>
+      <span class="breadcrumb-sep">/</span>
+      <span>Contact Us</span>
+    </div>
+    <h1 class="page-hero-title">
+      <span class="hero-title-line">Let's talk about</span><br/>
+      <span class="hero-title-line">your <em>next move</em></span>
+    </h1>
+    <p class="page-hero-sub">Call, message, or visit — choose whatever's easiest. The founders answer personally, every time.</p>
+  </div>
+</section>
+
+<!-- CONTACT METHOD SWITCHER -->
+<section class="switcher-section">
+  <div class="container">
+    <div class="switcher-grid reveal-up">
+      <div class="switcher-tabs" id="switcherTabs">
+        <button class="switcher-tab active" data-panel="call">
+          <span class="switcher-tab-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 014.36 12 19.79 19.79 0 011.3 3.44 2 2 0 013.28 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L7.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z" stroke="currentColor" stroke-width="1.6"/></svg></span>
+          <span>
+            <span class="switcher-tab-label">Call</span>
+            <span class="switcher-tab-sub" style="display:block;">Speak directly to a founder</span>
+          </span>
+        </button>
+        <button class="switcher-tab" data-panel="whatsapp">
+          <span class="switcher-tab-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M17 14c-.3-.15-1.78-.88-2.06-.98-.27-.1-.47-.15-.67.15-.2.3-.77.98-.95 1.18-.17.2-.35.22-.65.07-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.47-1.75-1.65-2.05-.17-.3-.02-.46.13-.61.15-.15.33-.4.5-.6.17-.2.22-.35.32-.57.1-.22.05-.4-.05-.6-.1-.2-.9-2.17-1.23-2.97-.32-.78-.65-.68-.9-.69-.22-.01-.48-.01-.73-.01-.25 0-.66.1-1 .5-.34.4-1.3 1.27-1.3 3.1 0 1.83 1.33 3.6 1.5 3.85.18.25 2.5 3.8 6.05 5.18 3.55 1.38 3.55.92 4.2.86.65-.06 2.1-.86 2.4-1.7.3-.83.3-1.55.2-1.7-.1-.15-.27-.22-.57-.37z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.4"/></svg></span>
+          <span>
+            <span class="switcher-tab-label">WhatsApp</span>
+            <span class="switcher-tab-sub" style="display:block;">Fastest for quick questions</span>
+          </span>
+        </button>
+        <button class="switcher-tab" data-panel="visit">
+          <span class="switcher-tab-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="10" r="3" stroke="currentColor" stroke-width="1.6"/></svg></span>
+          <span>
+            <span class="switcher-tab-label">Visit Office</span>
+            <span class="switcher-tab-sub" style="display:block;">Drop by during office hours</span>
+          </span>
+        </button>
+        <button class="switcher-tab" data-panel="email">
+          <span class="switcher-tab-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M3 7l9 6 9-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.6"/></svg></span>
+          <span>
+            <span class="switcher-tab-label">Email</span>
+            <span class="switcher-tab-sub" style="display:block;">Best for documents &amp; details</span>
+          </span>
+        </button>
+      </div>
+
+      <div class="switcher-panels">
+        <div class="switcher-panel active" data-panel="call">
+          <p class="panel-label">Call Us Directly</p>
+          <h3 class="panel-title">No call centers. Just the founders.</h3>
+          <p class="panel-text">Every call is answered by Inder or Vivek personally — not a routed support line. If we're with another client, we call back within the hour.</p>
+          <div class="panel-contacts">
+            <div class="panel-contact-row"><span class="who">Inder Latawa</span><a href="tel:+919988500421">+91 98885 00421</a></div>
+            <div class="panel-contact-row"><span class="who">Vivek Latawa</span><a href="tel:+919814978768">+91 98149 78768</a></div>
+          </div>
+          <p class="panel-note">Available Monday–Saturday, 9:30 AM – 7:00 PM IST.</p>
+        </div>
+
+        <div class="switcher-panel" data-panel="whatsapp">
+          <p class="panel-label">Message on WhatsApp</p>
+          <h3 class="panel-title">The quickest way to reach us</h3>
+          <p class="panel-text">Send a photo of a property, a question, or a document — WhatsApp is how most of our clients prefer to stay in touch day-to-day.</p>
+          <div class="panel-contacts">
+            <div class="panel-contact-row"><span class="who">Inder Latawa</span><a href="https://wa.me/919988500421" target="_blank" rel="noopener">+91 98885 00421</a></div>
+            <div class="panel-contact-row"><span class="who">Vivek Latawa</span><a href="https://wa.me/919814978768" target="_blank" rel="noopener">+91 98149 78768</a></div>
+          </div>
+          <p class="panel-note">Typical reply time: under 2 hours during office hours.</p>
+        </div>
+
+        <div class="switcher-panel" data-panel="visit">
+          <p class="panel-label">Visit Our Office</p>
+          <h3 class="panel-title">VPO Firozpur, Punjab</h3>
+          <p class="panel-text">Near Mata Mansa Devi Temple. Walk-ins are welcome, though booking ahead means we'll have relevant listings ready for you.</p>
+          <div class="hours-grid">
+            <div class="hours-row"><span>Mon – Fri</span><span>9:30 AM – 7:00 PM</span></div>
+            <div class="hours-row"><span>Saturday</span><span>10:00 AM – 5:00 PM</span></div>
+            <div class="hours-row"><span>Sunday</span><span>By appointment</span></div>
+            <div class="hours-row"><span>Public Holidays</span><span>Closed</span></div>
+          </div>
+          <p class="panel-note">See the map below for directions.</p>
+        </div>
+
+        <div class="switcher-panel" data-panel="email">
+          <p class="panel-label">Email Us</p>
+          <h3 class="panel-title">Best for documents and detail</h3>
+          <p class="panel-text">For sharing property documents, ID proofs, or a detailed brief on what you're looking for, email keeps everything in one place.</p>
+          <div class="panel-contacts">
+            <div class="panel-contact-row"><span class="who">General Enquiries</span><a href="mailto:info@latawarealestate.com">info@latawarealestate.com</a></div>
+          </div>
+          <p class="panel-note">We reply to all emails within one business day.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FORM + MAP -->
+<section class="form-map-section">
+  <div class="container">
+    <div class="form-map-grid">
+      <div class="contact-form-wrap glass-card reveal-up">
+        <h3 class="form-title">Send a Message</h3>
+        <p class="form-sub">Tell us a bit about what you're looking for — we'll follow up with options.</p>
+        <form class="contact-form" id="contactForm">
+          <div class="form-row">
+            <div class="form-group"><input type="text" name="name" placeholder="Your Full Name" required class="form-input" /></div>
+            <div class="form-group"><input type="tel" name="phone" placeholder="Phone Number" required class="form-input" /></div>
+          </div>
+          <div class="form-group"><input type="email" name="email" placeholder="Email Address" class="form-input" /></div>
+          <div class="form-group">
+            <select name="interest" class="form-input form-select">
+              <option value="" disabled selected>Area of Interest</option>
+              <option>Residential Property</option>
+              <option>Commercial Space</option>
+              <option>Investment Advisory</option>
+              <option>Property Management</option>
+            </select>
+          </div>
+          <div class="form-group"><textarea name="message" placeholder="Your Message" rows="4" class="form-input"></textarea></div>
+          <button type="submit" class="btn-primary full-width">Send Enquiry</button>
+        </form>
+      </div>
+
+      <div class="map-wrap reveal-up">
+        <iframe
+          src="https://www.google.com/maps?q=Mata%20Mansa%20Devi%20Temple%2C%20Firozpur%2C%20Punjab&output=embed"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          title="Latawa Real Estate office location map">
+        </iframe>
+        <div class="map-pin-card">
+          <span class="map-pin-icon">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" stroke="#C9A769" stroke-width="1.6"/><circle cx="12" cy="10" r="3" stroke="#C9A769" stroke-width="1.6"/></svg>
+          </span>
+          <span class="map-pin-text">
+            <p>Latawa Real Estate Office</p>
+            <p>VPO Firozpur, Near Mata Mansa Devi Temple, Punjab</p>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST STRIP -->
+<section class="trust-strip">
+  <div class="container">
+    <div class="trust-strip-grid">
+      <div class="trust-strip-card reveal-up">
+        <span class="trust-strip-icon"><svg viewBox="0 0 24 24" width="16" height="16" fill="none"><circle cx="12" cy="12" r="9" stroke="#C9A769" stroke-width="1.5"/><path d="M12 7v5l3 3" stroke="#C9A769" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+        <span>
+          <p class="trust-strip-title">Quick Response</p>
+          <p class="trust-strip-text">Most enquiries get a personal reply within 2 hours during office hours.</p>
+        </span>
+      </div>
+      <div class="trust-strip-card reveal-up">
+        <span class="trust-strip-icon"><svg viewBox="0 0 24 24" width="16" height="16" fill="none"><path d="M20 6L9 17l-5-5" stroke="#C9A769" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span>
+          <p class="trust-strip-title">No Pressure Tactics</p>
+          <p class="trust-strip-text">We answer questions honestly — including telling you when something isn't a fit.</p>
+        </span>
+      </div>
+      <div class="trust-strip-card reveal-up">
+        <span class="trust-strip-icon"><svg viewBox="0 0 24 24" width="16" height="16" fill="none"><circle cx="12" cy="8" r="4" stroke="#C9A769" stroke-width="1.5"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="#C9A769" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+        <span>
+          <p class="trust-strip-title">You Talk To Founders</p>
+          <p class="trust-strip-text">Every conversation here is with Inder or Vivek directly — never a call center.</p>
+        </span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section">
+  <div class="container">
+    <div class="section-header center reveal-up" style="max-width:560px;">
+      <p class="section-eyebrow">Before You Reach Out</p>
+      <h2 class="section-heading">Quick answers to<br/><em>common questions</em></h2>
+    </div>
+    <div class="faq-list" id="faqList">
+      <div class="faq-item open reveal-up">
+        <button class="faq-question">
+          <span>Do I need an appointment to visit the office?</span>
+          <span class="faq-icon"></span>
+        </button>
+        <div class="faq-answer"><div class="faq-answer-inner">Walk-ins are always welcome during office hours, but booking ahead by call or WhatsApp means we can have relevant listings and paperwork ready before you arrive.</div></div>
+      </div>
+      <div class="faq-item reveal-up">
+        <button class="faq-question">
+          <span>What information should I share when I first contact you?</span>
+          <span class="faq-icon"></span>
+        </button>
+        <div class="faq-answer"><div class="faq-answer-inner">Just your budget range, the city or area you're interested in, and whether you're looking to buy, sell, or invest. We'll ask follow-up questions from there.</div></div>
+      </div>
+      <div class="faq-item reveal-up">
+        <button class="faq-question">
+          <span>Do you charge for an initial consultation?</span>
+          <span class="faq-icon"></span>
+        </button>
+        <div class="faq-answer"><div class="faq-answer-inner">No. The first consultation — whether by phone, WhatsApp, or in person — is always free, with no obligation to proceed.</div></div>
+      </div>
+      <div class="faq-item reveal-up">
+        <button class="faq-question">
+          <span>Can you help if I'm an NRI managing property remotely?</span>
+          <span class="faq-icon"></span>
+        </button>
+        <div class="faq-answer"><div class="faq-answer-inner">Yes — we regularly assist NRI clients with documentation, site visits, and management on their behalf, with regular updates over call or email.</div></div>
+      </div>
+      <div class="faq-item reveal-up">
+        <button class="faq-question">
+          <span>How quickly will I hear back after submitting the form?</span>
+          <span class="faq-icon"></span>
+        </button>
+        <div class="faq-answer"><div class="faq-answer-inner">Within one business day, usually sooner. For anything urgent, calling or WhatsApp will always be faster than the contact form.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer" id="footer">
+  <div class="footer-top container">
+    <div class="footer-brand">
+      <a href="/" class="nav-logo footer-logo">
+        <svg viewBox="0 0 80 66" fill="none" xmlns="http://www.w3.org/2000/svg" class="logo-svg">
+          <path d="M40 3 L68 23 L68 27 L60 27 L60 23 L40 10 L20 23 L20 27 L12 27 L12 23 Z" fill="white"/>
+          <path d="M22 25 L22 58 L33 58 L33 40 L47 40 L47 58 L58 58 L58 25 L40 13 Z" fill="none" stroke="white" stroke-width="2.2"/>
+          <rect x="34" y="27" width="12" height="11" rx="0.5" fill="none" stroke="white" stroke-width="1.8"/>
+          <line x1="40" y1="27" x2="40" y2="38" stroke="white" stroke-width="1.2"/>
+          <line x1="34" y1="32.5" x2="46" y2="32.5" stroke="white" stroke-width="1.2"/>
+        </svg>
+        <div class="logo-text">
+          <span class="logo-name">LATAWA</span>
+          <span class="logo-sub">REAL ESTATE</span>
+        </div>
+      </a>
+      <p class="footer-tagline">Trust · Value · Growth</p>
+      <p class="footer-about">Crafting premium property experiences across Punjab with integrity, expertise, and a passion for growth.</p>
+    </div>
+    <div class="footer-links-wrap">
+      <div class="footer-col">
+        <h4 class="footer-col-title">Navigate</h4>
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/properties/">Properties</a></li>
+          <li><a href="/about-us/">About</a></li>
+          <li><a href="/services/">Services</a></li>
+          <li><a href="/projects/">Projects</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4 class="footer-col-title">Contact</h4>
+        <ul>
+          <li><a href="tel:+919988500421">+91 98885 00421</a></li>
+          <li><a href="tel:+919814978768">+91 98149 78768</a></li>
+          <li><a href="mailto:info@latawarealestate.com">info@latawarealestate.com</a></li>
+          <li>VPO Firozpur, Punjab</li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4 class="footer-col-title">Services</h4>
+        <ul>
+          <li>Residential Sales</li>
+          <li>Commercial Spaces</li>
+          <li>Legal Assistance</li>
+          <li>Investment Advisory</li>
+          <li>Property Management</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom container">
+    <p>© 2024 Latawa Real Estate. All rights reserved.</p>
+    <p class="footer-credit">Trust · Value · Growth</p>
+  </div>
+</footer>
+
+<script>
+gsap.registerPlugin(ScrollTrigger);
+const PREFERS_REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---- Preloader ---- */
+function initPreloader() {
+  return new Promise((resolve) => {
+    const preloader = document.getElementById('preloader');
+    const fill = document.getElementById('preloaderFill');
+    let progress = 0;
+    const step = () => {
+      progress += Math.random() * 20 + 8;
+      if (progress >= 100) {
+        progress = 100;
+        fill.style.width = '100%';
+        gsap.to(preloader, {
+          opacity: 0, duration: 0.6, delay: 0.2,
+          onComplete: () => { preloader.style.display = 'none'; resolve(); }
+        });
+        return;
+      }
+      fill.style.width = progress + '%';
+      setTimeout(step, 120);
+    };
+    step();
+  });
+}
+
+/* ---- Hero intro (pre-built markup, no innerHTML rewrite) ---- */
+function initHeroIntro() {
+  if (PREFERS_REDUCED) {
+    gsap.set('.hero-title-line, .page-hero-sub', { opacity: 1, y: 0 });
+    return;
+  }
+  const tl = gsap.timeline({ delay: 0.2 });
+  tl.to('.hero-title-line', { y: '0%', opacity: 1, duration: 0.9, ease: 'power4.out', stagger: 0.12 })
+    .to('.page-hero-sub', { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' }, '-=0.35');
+}
+
+/* ---- Navbar ---- */
+function initNavbar() {
+  const navbar = document.getElementById('navbar');
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      requestAnimationFrame(() => {
+        navbar.classList.toggle('scrolled', window.scrollY > 60);
+        ticking = false;
+      });
+      ticking = true;
+    }
+  }, { passive: true });
+}
+
+/* ---- Mobile menu ---- */
+function closeMobileMenu() {
+  const menu = document.getElementById('mobileMenu');
+  const hamburger = document.getElementById('hamburger');
+  if (!menu) return;
+  menu.classList.remove('open');
+  hamburger.classList.remove('active');
+  document.body.style.overflow = '';
+  setTimeout(() => { menu.style.display = 'none'; }, 400);
+}
+function initMobileMenu() {
+  const hamburger = document.getElementById('hamburger');
+  const menu = document.getElementById('mobileMenu');
+  if (!hamburger || !menu) return;
+  hamburger.addEventListener('click', () => {
+    const isOpen = menu.classList.contains('open');
+    if (isOpen) { closeMobileMenu(); }
+    else {
+      menu.style.display = 'flex';
+      requestAnimationFrame(() => menu.classList.add('open'));
+      hamburger.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+    const spans = hamburger.querySelectorAll('span');
+    if (!menu.classList.contains('open')) {
+      gsap.to(spans[0], { rotate: 45, y: 6.5, duration: 0.3 });
+      gsap.to(spans[1], { opacity: 0, duration: 0.2 });
+      gsap.to(spans[2], { rotate: -45, y: -6.5, duration: 0.3 });
+    } else {
+      gsap.to(spans[0], { rotate: 0, y: 0, duration: 0.3 });
+      gsap.to(spans[1], { opacity: 1, duration: 0.2 });
+      gsap.to(spans[2], { rotate: 0, y: 0, duration: 0.3 });
+    }
+  });
+  menu.querySelectorAll('a[href*="#"]').forEach((link) => link.addEventListener('click', closeMobileMenu));
+}
+
+/* ---- Contact method switcher ---- */
+function initSwitcher() {
+  const tabs = document.querySelectorAll('.switcher-tab');
+  const panels = document.querySelectorAll('.switcher-panel');
+  tabs.forEach((tab) => {
+    tab.addEventListener('click', () => {
+      const target = tab.getAttribute('data-panel');
+      tabs.forEach((t) => t.classList.toggle('active', t === tab));
+      panels.forEach((p) => p.classList.toggle('active', p.getAttribute('data-panel') === target));
+    });
+  });
+}
+
+/* ---- FAQ accordion ---- */
+function initFaq() {
+  document.querySelectorAll('.faq-item').forEach((item) => {
+    const question = item.querySelector('.faq-question');
+    const answer = item.querySelector('.faq-answer');
+    const inner = item.querySelector('.faq-answer-inner');
+
+    const setOpen = (open) => {
+      item.classList.toggle('open', open);
+      answer.style.maxHeight = open ? inner.scrollHeight + 'px' : '0px';
+    };
+    // initialize state from server-rendered "open" class
+    setOpen(item.classList.contains('open'));
+
+    question.addEventListener('click', () => {
+      const willOpen = !item.classList.contains('open');
+      setOpen(willOpen);
+    });
+  });
+  window.addEventListener('resize', () => {
+    document.querySelectorAll('.faq-item.open').forEach((item) => {
+      const inner = item.querySelector('.faq-answer-inner');
+      item.querySelector('.faq-answer').style.maxHeight = inner.scrollHeight + 'px';
+    });
+  }, { passive: true });
+}
+
+/* ---- Form handler ---- */
+function initForm() {
+  const form = document.getElementById('contactForm');
+  if (!form) return;
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const btn = form.querySelector('button[type="submit"]');
+    const orig = btn.textContent;
+    const name = form.elements['name']?.value.trim();
+    const phone = form.elements['phone']?.value.trim();
+    if (!name || !phone) {
+      btn.textContent = 'Please fill required fields';
+      setTimeout(() => { btn.textContent = orig; }, 2200);
+      return;
+    }
+    btn.textContent = 'Sending...';
+    btn.style.pointerEvents = 'none';
+    setTimeout(() => {
+      btn.textContent = 'Message Sent ✓';
+      form.reset();
+      setTimeout(() => { btn.textContent = orig; btn.style.pointerEvents = ''; }, 2500);
+    }, 900);
+  });
+}
+
+/* ---- Scroll reveals ---- */
+function initScrollReveals() {
+  if (PREFERS_REDUCED) {
+    document.querySelectorAll('.reveal-up').forEach(el => { el.style.opacity = '1'; el.style.transform = 'none'; });
+    return;
+  }
+  document.querySelectorAll('.reveal-up').forEach((el) => {
+    gsap.fromTo(el, { opacity: 0, y: 28 }, {
+      opacity: 1, y: 0, duration: 0.75, ease: 'power3.out',
+      scrollTrigger: { trigger: el, start: 'top 90%', toggleActions: 'play none none none' }
+    });
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  initPreloader().then(() => initHeroIntro());
+  initNavbar();
+  initMobileMenu();
+  initSwitcher();
+  initFaq();
+  initForm();
+  initScrollReveals();
+  window.addEventListener('load', () => ScrollTrigger.refresh(), { passive: true });
+});
+</script>
+</body>
+</html>
